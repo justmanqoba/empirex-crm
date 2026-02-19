@@ -1,0 +1,2710 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Empirex CRM">
+<meta name="theme-color" content="#0A0E17">
+<meta name="description" content="Empirex Legacy Group — Business CRM & Operations Hub">
+<title>Empirex Legacy Group — CRM</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Manrope:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* ══ LOGIN SCREEN ══ */
+#login-screen{position:fixed;inset:0;background:var(--bg);z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;}
+#login-screen.hidden{display:none;}
+.login-box{width:100%;max-width:360px;background:var(--surface);border:1px solid var(--border2);border-radius:20px;padding:32px 28px;}
+.login-logo{font-family:'Syne',sans-serif;font-size:28px;font-weight:800;color:var(--gold);text-align:center;letter-spacing:1px;}
+.login-tagline{font-size:11px;color:var(--text3);text-align:center;letter-spacing:2px;text-transform:uppercase;margin-bottom:28px;margin-top:4px;}
+.login-tabs{display:grid;grid-template-columns:1fr 1fr;gap:0;margin-bottom:22px;background:var(--surface2);border-radius:10px;padding:3px;}
+.login-tab{padding:9px;text-align:center;font-size:13px;font-weight:600;color:var(--text3);cursor:pointer;border-radius:8px;transition:all 0.15s;}
+.login-tab.active{background:var(--gold);color:#0A0E17;}
+.login-form{display:flex;flex-direction:column;gap:12px;}
+.login-err{background:var(--red-dim);border:1px solid rgba(239,68,68,0.3);border-radius:8px;padding:10px 12px;font-size:12px;color:var(--red);display:none;}
+.login-err.show{display:block;}
+.role-select{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.role-opt{padding:10px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;text-align:center;cursor:pointer;transition:all 0.15s;}
+.role-opt.selected{border-color:var(--gold);background:var(--gold-dim);color:var(--gold);}
+.role-opt-icon{font-size:20px;margin-bottom:4px;}
+.role-opt-label{font-size:11px;font-weight:600;}
+.install-banner{display:none;position:fixed;bottom:0;left:0;right:0;background:var(--surface);border-top:1px solid var(--border2);padding:14px 16px;z-index:8000;align-items:center;gap:12px;}
+.install-banner.show{display:flex;}
+
+/* ══ USER BADGE IN TOPBAR ══ */
+.user-badge{display:flex;align-items:center;gap:8px;padding:6px 10px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--r);cursor:pointer;transition:all 0.15s;}
+.user-badge:hover{border-color:var(--border2);}
+.user-av{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;}
+.user-name{font-size:12px;font-weight:600;max-width:80px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+
+/* ══ CLIENT PORTAL VIEW ══ */
+#view-portal .portal-section{margin-bottom:18px;}
+#view-portal .portal-section-title{font-family:'Syne',sans-serif;font-size:15px;font-weight:700;margin-bottom:10px;}
+:root {
+  --bg: #0A0E17;
+  --surface: #111827;
+  --surface2: #1A2236;
+  --surface3: #202D45;
+  --border: rgba(255,255,255,0.06);
+  --border2: rgba(255,255,255,0.12);
+  --gold: #E8A020;
+  --gold2: #F5C45A;
+  --gold-dim: rgba(232,160,32,0.1);
+  --blue: #3B82F6;
+  --blue-dim: rgba(59,130,246,0.12);
+  --green: #10B981;
+  --green-dim: rgba(16,185,129,0.12);
+  --red: #EF4444;
+  --red-dim: rgba(239,68,68,0.12);
+  --amber: #F59E0B;
+  --amber-dim: rgba(245,158,11,0.12);
+  --purple: #8B5CF6;
+  --purple-dim: rgba(139,92,246,0.12);
+  --text: #F1F5F9;
+  --text2: #94A3B8;
+  --text3: #64748B;
+  --r: 8px;
+  --r2: 12px;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html,body{overflow-x:hidden;width:100%;max-width:100%;}
+body{font-family:'Manrope',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;}
+
+/* ─── SIDEBAR ─── */
+.sidebar{width:240px;min-height:100vh;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;position:fixed;inset:0 auto 0 0;z-index:300;transform:translateX(-260px);transition:transform 0.3s cubic-bezier(0.4,0,0.2,1),box-shadow 0.3s;}
+.sidebar.open{transform:translateX(0);box-shadow:6px 0 48px rgba(0,0,0,0.7);}
+.brand{padding:22px 20px 18px;border-bottom:1px solid var(--border);display:flex;align-items:flex-start;justify-content:space-between;gap:8px;}
+.brand-text{flex:1;}
+.brand-name{font-family:'Syne',sans-serif;font-size:18px;font-weight:800;color:var(--gold);letter-spacing:0.5px;}
+.brand-tag{font-size:10px;color:var(--text3);letter-spacing:2px;text-transform:uppercase;margin-top:2px;}
+.sidebar-close{background:none;border:none;color:var(--text3);font-size:20px;cursor:pointer;line-height:1;padding:2px;transition:color 0.15s;flex-shrink:0;margin-top:1px;}
+.sidebar-close:hover{color:var(--red);}
+.nav{flex:1;padding:10px 0;overflow-y:auto;}
+.nav-group{margin-bottom:4px;}
+.nav-label{font-size:9px;letter-spacing:2.5px;text-transform:uppercase;color:var(--text3);padding:14px 20px 6px;}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 20px;font-size:13px;font-weight:500;color:var(--text2);cursor:pointer;border-radius:0;transition:all 0.15s;position:relative;}
+.nav-item:hover{color:var(--text);background:rgba(255,255,255,0.04);}
+.nav-item.active{color:var(--gold);background:var(--gold-dim);}
+.nav-item.active::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--gold);border-radius:0 3px 3px 0;}
+.nav-icon{width:18px;font-size:15px;text-align:center;flex-shrink:0;}
+.nav-badge{margin-left:auto;background:var(--red);color:#fff;font-size:9px;font-weight:700;padding:2px 6px;border-radius:20px;min-width:18px;text-align:center;}
+.sidebar-foot{padding:14px 20px;border-top:1px solid var(--border);}
+.status-dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--green);margin-right:6px;}
+.sidebar-foot-text{font-size:11px;color:var(--text3);}
+
+/* ─── BACKDROP ─── */
+.backdrop{position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:299;opacity:0;pointer-events:none;transition:opacity 0.3s;backdrop-filter:blur(2px);}
+.backdrop.open{opacity:1;pointer-events:all;}
+
+/* ─── MENU TOGGLE ─── */
+.menu-btn{width:38px;height:38px;border-radius:var(--r);background:var(--surface2);border:1px solid var(--border2);color:var(--text2);font-size:17px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.15s;flex-shrink:0;}
+.menu-btn:hover{color:var(--gold);border-color:rgba(232,160,32,0.5);background:var(--gold-dim);}
+
+/* ─── MAIN ─── */
+.main{display:flex;flex-direction:column;height:100vh;overflow:hidden;width:100%;max-width:100%;position:relative;}
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:var(--surface);border-bottom:1px solid var(--border);flex-shrink:0;width:100%;}
+.topbar-left{display:flex;align-items:center;gap:10px;min-width:0;flex:1;}
+.page-title{font-family:'Syne',sans-serif;font-size:20px;font-weight:700;white-space:nowrap;}
+.topbar-right{display:flex;align-items:center;gap:10px;flex-shrink:0;}
+.search-input{background:var(--surface2);border:1px solid var(--border2);border-radius:var(--r);padding:8px 14px;color:var(--text);font-size:13px;width:220px;outline:none;font-family:'Manrope',sans-serif;}
+.search-input:focus{border-color:var(--blue);}
+.scroll-area{flex:1;overflow-y:auto;overflow-x:hidden;padding:20px 16px;width:100%;}
+
+/* ─── BUTTONS ─── */
+.btn{padding:8px 16px;border-radius:var(--r);font-family:'Manrope',sans-serif;font-size:13px;font-weight:600;cursor:pointer;border:none;transition:all 0.15s;display:inline-flex;align-items:center;gap:6px;}
+.btn-gold{background:var(--gold);color:#0A0E17;}
+.btn-gold:hover{background:var(--gold2);}
+.btn-ghost{background:transparent;color:var(--text2);border:1px solid var(--border2);}
+.btn-ghost:hover{color:var(--text);border-color:rgba(255,255,255,0.25);}
+.btn-blue{background:var(--blue-dim);color:var(--blue);border:1px solid rgba(59,130,246,0.3);}
+.btn-green{background:var(--green-dim);color:var(--green);border:1px solid rgba(16,185,129,0.3);}
+.btn-red{background:var(--red-dim);color:var(--red);border:1px solid rgba(239,68,68,0.3);}
+.btn-sm{padding:5px 11px;font-size:12px;}
+.btn-xs{padding:3px 9px;font-size:11px;}
+
+/* ─── CARDS ─── */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r2);padding:20px;}
+.card-sm{padding:14px 16px;}
+.card-title{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--text3);margin-bottom:12px;font-weight:600;}
+
+/* ─── GRIDS ─── */
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px;}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.g-main{display:grid;grid-template-columns:1fr 340px;gap:16px;margin-bottom:16px;}
+
+/* ─── KPI ─── */
+.kpi{background:var(--surface);border:1px solid var(--border);border-radius:var(--r2);padding:18px;position:relative;overflow:hidden;}
+.kpi-glow{position:absolute;inset:0;opacity:0.04;pointer-events:none;}
+.kpi-label{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--text3);margin-bottom:6px;}
+.kpi-num{font-family:'Syne',sans-serif;font-size:36px;font-weight:700;line-height:1;}
+.kpi-sub{font-size:11px;color:var(--text3);margin-top:5px;}
+.kpi-icon{position:absolute;right:14px;top:14px;font-size:22px;opacity:0.15;}
+
+/* ─── TABLE ─── */
+.tbl-wrap{overflow-x:auto;}
+table{width:100%;border-collapse:collapse;font-size:13px;}
+th{text-align:left;padding:9px 12px;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--text3);border-bottom:1px solid var(--border);font-weight:600;}
+td{padding:11px 12px;border-bottom:1px solid rgba(255,255,255,0.03);vertical-align:middle;}
+tr:last-child td{border-bottom:none;}
+tr:hover td{background:rgba(255,255,255,0.02);}
+
+/* ─── PILLS ─── */
+.pill{display:inline-flex;align-items:center;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:600;gap:4px;}
+.pill::before{content:'';width:5px;height:5px;border-radius:50%;background:currentColor;}
+.p-green{background:var(--green-dim);color:var(--green);}
+.p-gold{background:var(--gold-dim);color:var(--gold);}
+.p-blue{background:var(--blue-dim);color:var(--blue);}
+.p-red{background:var(--red-dim);color:var(--red);}
+.p-grey{background:rgba(100,116,139,0.15);color:var(--text3);}
+.p-purple{background:var(--purple-dim);color:var(--purple);}
+
+/* ─── FORM ─── */
+.fgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.fgrid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;}
+.fg{display:flex;flex-direction:column;gap:5px;}
+.fg.full{grid-column:1/-1;}
+label{font-size:10px;color:var(--text3);letter-spacing:1.5px;text-transform:uppercase;font-weight:600;}
+input,select,textarea{background:var(--surface2);border:1px solid var(--border2);border-radius:var(--r);padding:9px 11px;color:var(--text);font-family:'Manrope',sans-serif;font-size:13px;outline:none;transition:border 0.15s;width:100%;}
+input:focus,select:focus,textarea:focus{border-color:var(--blue);}
+textarea{resize:vertical;min-height:70px;}
+select option{background:var(--surface2);}
+.divider{height:1px;background:var(--border);margin:16px 0;}
+
+/* ─── MODAL ─── */
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,0.7);display:none;align-items:center;justify-content:center;z-index:1000;backdrop-filter:blur(6px);}
+.overlay.open{display:flex;}
+.modal{background:var(--surface);border:1px solid var(--border2);border-radius:16px;padding:26px;width:700px;max-width:95vw;max-height:92vh;overflow-y:auto;position:relative;animation:popIn 0.2s ease;}
+.modal-wide{width:860px;}
+@keyframes popIn{from{opacity:0;transform:scale(0.96) translateY(10px);}to{opacity:1;transform:scale(1) translateY(0);}}
+.modal-title{font-family:'Syne',sans-serif;font-size:20px;font-weight:700;color:var(--gold);margin-bottom:20px;}
+.modal-x{position:absolute;right:18px;top:16px;background:none;border:none;color:var(--text3);font-size:18px;cursor:pointer;padding:4px;}
+.modal-x:hover{color:var(--text);}
+.modal-foot{display:flex;gap:10px;margin-top:20px;justify-content:flex-end;}
+
+/* ─── AVATAR ─── */
+.av{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px;flex-shrink:0;}
+
+/* ─── ACTIVITY ─── */
+.act-item{display:flex;gap:10px;padding:10px 0;border-bottom:1px solid var(--border);}
+.act-item:last-child{border-bottom:none;}
+.act-dot{width:7px;height:7px;border-radius:50%;margin-top:5px;flex-shrink:0;}
+.act-text{font-size:12px;color:var(--text);}
+.act-time{font-size:10px;color:var(--text3);margin-top:2px;}
+
+/* ─── CONTACT CARD ─── */
+.contact-card{background:var(--surface2);border:1px solid var(--border);border-radius:var(--r2);padding:16px;cursor:pointer;transition:all 0.15s;position:relative;}
+.contact-card:hover{border-color:var(--border2);transform:translateY(-1px);}
+.contact-card.selected{border-color:var(--gold);background:var(--gold-dim);}
+.contact-name{font-weight:700;font-size:14px;margin-bottom:2px;}
+.contact-role{font-size:11px;color:var(--gold);}
+.contact-detail{font-size:11px;color:var(--text3);margin-top:6px;display:flex;flex-direction:column;gap:3px;}
+
+/* ─── DETAIL PANEL ─── */
+.detail-panel{background:var(--surface);border:1px solid var(--border);border-radius:var(--r2);padding:20px;}
+.detail-header{display:flex;align-items:center;gap:14px;margin-bottom:18px;}
+.detail-av{width:52px;height:52px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-weight:800;font-size:18px;}
+.detail-name{font-family:'Syne',sans-serif;font-size:17px;font-weight:700;}
+.detail-sub{font-size:12px;color:var(--text3);margin-top:2px;}
+.info-row{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);font-size:12px;}
+.info-row:last-child{border-bottom:none;}
+.info-label{color:var(--text3);}
+.info-val{color:var(--text);font-weight:500;text-align:right;}
+
+/* ─── PIPELINE ─── */
+.pipe-board{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;}
+.pipe-col{background:var(--surface2);border:1px solid var(--border);border-radius:var(--r2);padding:12px;min-height:140px;}
+.pipe-head{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--text3);margin-bottom:10px;display:flex;justify-content:space-between;align-items:center;}
+.pipe-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:10px;margin-bottom:7px;cursor:pointer;transition:all 0.15s;}
+.pipe-card:hover{border-color:var(--border2);}
+.pipe-card-id{font-size:10px;color:var(--gold);font-family:'JetBrains Mono',monospace;margin-bottom:3px;}
+.pipe-card-name{font-size:12px;font-weight:600;margin-bottom:2px;}
+.pipe-card-val{font-size:11px;color:var(--text3);}
+
+/* ─── TIMELINE ─── */
+.timeline{position:relative;padding-left:20px;}
+.timeline::before{content:'';position:absolute;left:6px;top:0;bottom:0;width:1px;background:var(--border);}
+.tl-item{position:relative;margin-bottom:14px;}
+.tl-dot{position:absolute;left:-17px;width:11px;height:11px;border-radius:50%;border:2px solid var(--bg);top:3px;}
+.tl-text{font-size:12px;color:var(--text);}
+.tl-time{font-size:10px;color:var(--text3);}
+
+/* ─── QUOTE BUILDER ─── */
+.qline{display:grid;grid-template-columns:2.5fr 0.7fr 1fr 1fr auto;gap:8px;align-items:center;margin-bottom:6px;}
+.totals-bar{background:linear-gradient(135deg,var(--surface2),var(--surface3));border:1px solid var(--border2);border-radius:var(--r2);padding:16px 20px;display:flex;justify-content:space-between;margin-top:12px;}
+.tot-label{font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--text3);margin-bottom:4px;}
+.tot-val{font-family:'Syne',sans-serif;font-size:26px;font-weight:700;}
+
+/* ─── PORTAL CARDS ─── */
+.portal-card{display:flex;flex-direction:column;align-items:center;gap:6px;padding:14px 10px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--r2);text-decoration:none;transition:all 0.15s;cursor:pointer;}
+.portal-card:hover{border-color:var(--gold);background:var(--gold-dim);transform:translateY(-2px);}
+.portal-icon{font-size:26px;}
+.portal-name{font-size:12px;font-weight:700;color:var(--text);text-align:center;}
+.portal-sub{font-size:10px;color:var(--text3);text-align:center;}
+
+/* ─── DOCUMENT CARDS ─── */
+.doc-card{background:var(--surface2);border:1px solid var(--border);border-radius:var(--r2);padding:14px;transition:all 0.15s;position:relative;}
+.doc-card:hover{border-color:var(--border2);}
+.doc-card.expiring{border-color:rgba(245,158,11,0.4);}
+.doc-card.expired{border-color:rgba(239,68,68,0.4);}
+.doc-icon{font-size:28px;margin-bottom:8px;}
+.doc-name{font-size:13px;font-weight:700;margin-bottom:3px;word-break:break-word;}
+.doc-type{font-size:10px;color:var(--text3);margin-bottom:6px;}
+.doc-expiry{font-size:10px;margin-top:6px;}
+.doc-actions{display:flex;gap:6px;margin-top:8px;}
+.doc-tab.active{background:var(--gold-dim);color:var(--gold);border-color:rgba(232,160,32,0.4);}
+
+/* ─── CHECKLIST ─── */
+.check-item{display:flex;align-items:center;gap:8px;padding:8px 10px;background:var(--surface2);border-radius:var(--r);font-size:12px;}
+.check-item.done{opacity:0.6;}
+.check-dot{width:18px;height:18px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;flex-shrink:0;}
+.check-dot.ok{background:var(--green-dim);color:var(--green);}
+.check-dot.missing{background:var(--red-dim);color:var(--red);}
+
+/* ─── TENDER STAT CARDS ─── */
+.tstat{background:var(--surface);border:1px solid var(--border);border-radius:var(--r2);padding:14px;text-align:center;}
+.tstat-num{font-family:'Syne',sans-serif;font-size:28px;font-weight:700;}
+.tstat-label{font-size:10px;color:var(--text3);letter-spacing:1px;text-transform:uppercase;margin-top:4px;}
+
+/* ─── BID OUTPUT ─── */
+#bid-output{font-family:'Manrope',sans-serif !important;font-size:13px !important;line-height:1.8;}
+.followup-item{display:flex;align-items:center;gap:12px;padding:12px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--r);margin-bottom:8px;}
+.followup-item.urgent{border-color:rgba(239,68,68,0.4);background:var(--red-dim);}
+.followup-item.warn{border-color:rgba(245,158,11,0.3);background:var(--amber-dim);}
+
+/* ─── SCROLLBAR ─── */
+::-webkit-scrollbar{width:4px;height:4px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:var(--surface3);border-radius:2px;}
+
+/* ─── TOAST ─── */
+.toast{position:fixed;bottom:22px;right:22px;background:var(--green);color:#0A0E17;padding:11px 18px;border-radius:var(--r);font-weight:700;font-size:13px;z-index:9999;opacity:0;transform:translateY(8px);transition:all 0.25s;pointer-events:none;}
+.toast.show{opacity:1;transform:translateY(0);}
+
+/* ─── VIEWS ─── */
+.view{display:none;animation:fadeUp 0.18s ease;}
+.view.active{display:block;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+
+.mono{font-family:'JetBrains Mono',monospace;}
+.sec-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;}
+.sec-title{font-family:'Syne',sans-serif;font-size:17px;font-weight:700;}
+.tag{display:inline-block;padding:2px 8px;border-radius:4px;font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;}
+
+/* ════════════════════════════════════════
+   MOBILE RESPONSIVE — Itel Vision Z3 & similar
+   Target: ~360–390px wide screens
+   ════════════════════════════════════════ */
+@media (max-width: 768px) {
+
+  /* Prevent ANY horizontal overflow */
+  html, body { overflow-x: hidden; width: 100%; }
+  .main { width: 100vw; overflow-x: hidden; }
+  .scroll-area { width: 100%; overflow-x: hidden; padding: 12px 10px; }
+
+  /* Topbar — tighter, no overflow */
+  .topbar { padding: 10px 12px; gap: 6px; flex-wrap: nowrap; }
+  .topbar-left { gap: 8px; min-width: 0; flex-shrink: 1; }
+  .topbar-right { flex-shrink: 0; gap: 6px; }
+  .page-title { font-size: 15px; white-space: nowrap; }
+  .search-input { width: 110px; font-size: 12px; padding: 7px 8px; }
+  .btn-gold { padding: 7px 10px; font-size: 12px; white-space: nowrap; }
+
+  /* KPI grid — 2 cols, full width, no overflow */
+  .g4 { grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px; width: 100%; }
+  .kpi { padding: 12px; overflow: hidden; }
+  .kpi-num { font-size: 26px; }
+  .kpi-icon { font-size: 16px; right: 10px; top: 10px; }
+  .kpi-label { font-size: 9px; }
+  .kpi-sub { font-size: 10px; }
+
+  /* All multi-col grids collapse to single column */
+  .g3, .g2, .g-main { grid-template-columns: 1fr; gap: 10px; }
+
+  /* Dashboard pipeline — horizontal scroll container */
+  .pipe-board {
+    display: flex;
+    flex-direction: row;
+    gap: 8px;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 8px;
+    width: 100%;
+  }
+  .pipe-col { min-width: 150px; flex-shrink: 0; }
+
+  /* Cards */
+  .card { padding: 12px; width: 100%; overflow: hidden; }
+  .card-sm { padding: 10px 12px; }
+
+  /* Section headers */
+  .sec-head { flex-wrap: wrap; gap: 8px; }
+  .sec-title { font-size: 14px; }
+
+  /* Tables — horizontal scroll */
+  .tbl-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; width: 100%; }
+  table { font-size: 12px; min-width: 520px; }
+  td, th { padding: 9px 8px; }
+
+  /* Contact cards — 1 col */
+  #client-cards, #supplier-cards { grid-template-columns: 1fr !important; }
+
+  /* Client/supplier layout — stack vertically */
+  #view-clients > div,
+  #view-suppliers > div { grid-template-columns: 1fr !important; }
+
+  /* Follow-up items */
+  .followup-item { flex-direction: column; align-items: flex-start; gap: 8px; }
+
+  /* Quote line items */
+  .qline { grid-template-columns: 1fr 1fr; gap: 6px; }
+  .qline input:first-child { grid-column: 1 / -1; }
+
+  /* Totals bar */
+  .totals-bar { flex-wrap: wrap; gap: 10px; }
+  .totals-bar > div { min-width: 45%; }
+  .tot-val { font-size: 18px; }
+
+  /* Form grids — single column */
+  .fgrid, .fgrid3 { grid-template-columns: 1fr; }
+  .fg.full { grid-column: 1; }
+
+  /* Modal — full screen */
+  .modal, .modal-wide {
+    width: 100vw;
+    max-width: 100vw;
+    min-height: 100vh;
+    height: auto;
+    border-radius: 0;
+    padding: 18px 14px 30px;
+  }
+  .overlay { align-items: flex-start; }
+
+  /* Buttons */
+  .btn { padding: 10px 14px; font-size: 13px; }
+  .btn-sm { padding: 8px 12px; font-size: 12px; }
+  .btn-xs { padding: 6px 10px; font-size: 11px; }
+  .menu-btn { width: 40px; height: 40px; font-size: 18px; flex-shrink: 0; }
+
+  /* Sidebar */
+  .sidebar { width: 82vw; max-width: 290px; }
+
+  /* Nav items */
+  .nav-item { padding: 13px 20px; font-size: 14px; }
+  .nav-label { padding: 16px 20px 6px; }
+
+  /* Toast */
+  .toast { left: 10px; right: 10px; bottom: 14px; text-align: center; }
+
+  /* Order pipeline */
+  #order-pipeline {
+    display: flex;
+    flex-direction: row;
+    gap: 8px;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 8px;
+  }
+  #order-pipeline .pipe-col { min-width: 150px; flex-shrink: 0; }
+
+  /* Margin summary */
+  #margin-summary { grid-template-columns: 1fr 1fr !important; gap: 10px; }
+
+  /* Inputs */
+  input, select, textarea { padding: 11px 12px; font-size: 14px; }
+  label { font-size: 11px; }
+
+  /* Invoice summary */
+  #view-invoices .g3 { grid-template-columns: 1fr 1fr; gap: 8px; }
+}
+
+@media (max-width: 400px) {
+  .g4 { gap: 6px; }
+  .kpi-num { font-size: 22px; }
+  .topbar { padding: 8px 10px; }
+  .page-title { font-size: 13px; }
+  .search-input { width: 90px; font-size: 11px; }
+  .scroll-area { padding: 10px 8px; }
+  .card { padding: 10px; }
+  #view-invoices .g3 { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<!-- ═══ LOGIN SCREEN ═══ -->
+<div id="login-screen">
+  <div class="login-box">
+    <div class="login-logo">EMPIREX</div>
+    <div class="login-tagline">Legacy Group · Business Hub</div>
+    <div class="login-tabs">
+      <div class="login-tab active" onclick="switchLoginTab('login',this)">Sign In</div>
+      <div class="login-tab" onclick="switchLoginTab('register',this)">Register</div>
+    </div>
+    <div class="login-err" id="login-err"></div>
+
+    <!-- SIGN IN -->
+    <div id="tab-login" class="login-form">
+      <div class="fg"><label>Email or Username</label><input id="li-email" type="email" placeholder="your@email.com" autocomplete="email"></div>
+      <div class="fg"><label>Password</label><input id="li-pass" type="password" placeholder="••••••••" autocomplete="current-password"></div>
+      <button class="btn btn-gold" onclick="doLogin()" style="width:100%;justify-content:center;padding:13px;font-size:14px;margin-top:4px">Sign In →</button>
+      <div style="text-align:center;font-size:11px;color:var(--text3);margin-top:8px">
+        Demo: <strong style="color:var(--gold)"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="b8d9dcd5d1d6f8ddd5c8d1caddc096dbd796c2d9">[email&#160;protected]</a></strong> / <strong style="color:var(--gold)">admin123</strong>
+      </div>
+    </div>
+
+    <!-- REGISTER -->
+    <div id="tab-register" class="login-form" style="display:none">
+      <div class="fg"><label>Full Name *</label><input id="rg-name" placeholder="Your full name"></div>
+      <div class="fg"><label>Email *</label><input id="rg-email" type="email" placeholder="your@email.com"></div>
+      <div class="fg"><label>Password *</label><input id="rg-pass" type="password" placeholder="Min 6 characters"></div>
+      <div class="fg"><label>Confirm Password *</label><input id="rg-pass2" type="password" placeholder="Repeat password"></div>
+      <div class="fg"><label>Account Type</label>
+        <div class="role-select">
+          <div class="role-opt selected" id="role-admin" onclick="selectRole('admin')">
+            <div class="role-opt-icon">👤</div>
+            <div class="role-opt-label">Staff / Admin</div>
+          </div>
+          <div class="role-opt" id="role-client" onclick="selectRole('client')">
+            <div class="role-opt-icon">🏢</div>
+            <div class="role-opt-label">Client</div>
+          </div>
+        </div>
+      </div>
+      <div class="fg" id="rg-company-wrap" style="display:none"><label>Company Name</label><input id="rg-company" placeholder="Your company name"></div>
+      <button class="btn btn-gold" onclick="doRegister()" style="width:100%;justify-content:center;padding:13px;font-size:14px;margin-top:4px">Create Account →</button>
+    </div>
+  </div>
+
+  <!-- Install hint -->
+  <div style="margin-top:20px;text-align:center;font-size:11px;color:var(--text3);max-width:300px">
+    💡 Tip: Tap your browser menu → <strong style="color:var(--gold)">"Add to Home Screen"</strong> to install as an app
+  </div>
+</div>
+
+<!-- ═══ INSTALL BANNER ═══ -->
+<div class="install-banner" id="install-banner">
+  <div style="font-size:24px">📱</div>
+  <div style="flex:1">
+    <div style="font-size:13px;font-weight:700">Install Empirex CRM</div>
+    <div style="font-size:11px;color:var(--text3)">Add to your home screen for offline access</div>
+  </div>
+  <button class="btn btn-gold btn-sm" id="install-btn">Install</button>
+  <button class="btn btn-ghost btn-sm" onclick="document.getElementById('install-banner').classList.remove('show')">✕</button>
+</div>
+
+<!-- ═══ BACKDROP ═══ -->
+<div class="backdrop" id="backdrop" onclick="closeSidebar()"></div>
+
+<!-- ═══ SIDEBAR ═══ -->
+<aside class="sidebar" id="sidebar">
+  <div class="brand">
+    <div class="brand-text">
+      <div class="brand-name">EMPIREX</div>
+      <div class="brand-tag">Legacy Group · CRM Hub</div>
+    </div>
+    <button class="sidebar-close" onclick="closeSidebar()" title="Close menu" style="display:none">✕</button>
+  </div>
+  <nav class="nav">
+    <div class="nav-group">
+      <div class="nav-label">Overview</div>
+      <div class="nav-item active" data-view="dashboard" onclick="nav(this)"><span class="nav-icon">⬛</span>Dashboard</div>
+    </div>
+    <div class="nav-group">
+      <div class="nav-label">CRM</div>
+      <div class="nav-item" data-view="clients" onclick="nav(this)"><span class="nav-icon">🏢</span>Clients<span class="nav-badge" id="nb-clients" style="display:none">0</span></div>
+      <div class="nav-item" data-view="suppliers" onclick="nav(this)"><span class="nav-icon">🏭</span>Suppliers</div>
+      <div class="nav-item" data-view="followups" onclick="nav(this)"><span class="nav-icon">🔔</span>Follow-Ups<span class="nav-badge" id="nb-followups" style="display:none">0</span></div>
+    </div>
+    <div class="nav-group">
+      <div class="nav-label">Operations</div>
+      <div class="nav-item" data-view="orders" onclick="nav(this)"><span class="nav-icon">📦</span>Orders & Shipments</div>
+      <div class="nav-item" data-view="quotes" onclick="nav(this)"><span class="nav-icon">📋</span>Quotes</div>
+      <div class="nav-item" data-view="invoices" onclick="nav(this)"><span class="nav-icon">🧾</span>Invoices & Payments<span class="nav-badge" id="nb-invoices" style="display:none">0</span></div>
+    </div>
+    <div class="nav-group">
+      <div class="nav-label">Catalog</div>
+      <div class="nav-item" data-view="catalog" onclick="nav(this)"><span class="nav-icon">⚡</span>Cable Catalog</div>
+    </div>
+    <div class="nav-group">
+      <div class="nav-label">Tenders</div>
+      <div class="nav-item" data-view="documents" onclick="nav(this)"><span class="nav-icon">📁</span>Documents Vault</div>
+      <div class="nav-item" data-view="tenders" onclick="nav(this)"><span class="nav-icon">🏆</span>Tender Tracker<span class="nav-badge" id="nb-tenders" style="display:none">0</span></div>
+      <div class="nav-item" data-view="biddrafter" onclick="nav(this)"><span class="nav-icon">🤖</span>AI Bid Drafter</div>
+    </div>
+  </nav>
+  <div class="sidebar-foot">
+    <div style="display:flex;align-items:center;gap:6px">
+      <span class="status-dot"></span>
+      <span class="sidebar-foot-text">SOW/174/002 — Active</span>
+    </div>
+  </div>
+</aside>
+
+<!-- ═══ MAIN ═══ -->
+<main class="main">
+  <div class="topbar">
+    <div class="topbar-left">
+      <button class="menu-btn" onclick="openSidebar()" title="Open menu">☰</button>
+      <div class="page-title" id="page-title">Dashboard</div>
+    </div>
+    <div class="topbar-right">
+      <input class="search-input" id="global-search" placeholder="🔍  Search..." oninput="globalSearch(this.value)">
+      <button class="btn btn-gold" id="topbar-cta" onclick="topbarAction()">+ New Order</button>
+      <div class="user-badge" onclick="showUserMenu()" id="user-badge" style="display:none">
+        <div class="user-av" id="user-av"></div>
+        <div class="user-name" id="user-name-badge"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="scroll-area">
+
+    <!-- ══ DASHBOARD ══ -->
+    <div class="view active" id="view-dashboard">
+      <div class="g4">
+        <div class="kpi" style="border-top:2px solid var(--gold)">
+          <div class="kpi-icon">📦</div>
+          <div class="kpi-label">Active Orders</div>
+          <div class="kpi-num" id="kpi-orders" style="color:var(--gold)">0</div>
+          <div class="kpi-sub">In pipeline</div>
+        </div>
+        <div class="kpi" style="border-top:2px solid var(--green)">
+          <div class="kpi-icon">💰</div>
+          <div class="kpi-label">Collected (ZAR)</div>
+          <div class="kpi-num" id="kpi-collected" style="color:var(--green)">R0</div>
+          <div class="kpi-sub">Paid invoices</div>
+        </div>
+        <div class="kpi" style="border-top:2px solid var(--blue)">
+          <div class="kpi-icon">📋</div>
+          <div class="kpi-label">Open Quotes</div>
+          <div class="kpi-num" id="kpi-quotes" style="color:var(--blue)">0</div>
+          <div class="kpi-sub">Pending response</div>
+        </div>
+        <div class="kpi" style="border-top:2px solid var(--red)">
+          <div class="kpi-icon">⏰</div>
+          <div class="kpi-label">Needs Attention</div>
+          <div class="kpi-num" id="kpi-alerts" style="color:var(--red)">0</div>
+          <div class="kpi-sub">Overdue + follow-ups</div>
+        </div>
+      </div>
+
+      <div class="g-main">
+        <div>
+          <div class="card" style="margin-bottom:14px">
+            <div class="card-title">Order Pipeline</div>
+            <div class="pipe-board" id="dash-pipeline"></div>
+          </div>
+          <div class="card">
+            <div class="card-title">Margin Summary</div>
+            <div id="margin-summary" style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px"></div>
+          </div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:14px">
+          <div class="card">
+            <div class="card-title">Urgent Follow-Ups</div>
+            <div id="dash-followups"></div>
+          </div>
+          <div class="card">
+            <div class="card-title">Recent Activity</div>
+            <div id="dash-activity"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ CLIENTS CRM ══ -->
+    <div class="view" id="view-clients">
+      <div style="display:grid;grid-template-columns:1fr 340px;gap:16px">
+        <div>
+          <div class="sec-head">
+            <div class="sec-title">Clients</div>
+            <button class="btn btn-gold" onclick="openModal('m-client')">+ Add Client</button>
+          </div>
+          <div id="client-cards" style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px"></div>
+          <div id="client-empty" style="text-align:center;padding:40px;color:var(--text3)">No clients yet. Add your first client.</div>
+          <!-- Orders for client -->
+          <div id="client-orders-section" style="display:none">
+            <div class="sec-head" style="margin-top:10px">
+              <div class="sec-title" style="font-size:14px" id="client-orders-title">Orders</div>
+              <button class="btn btn-gold btn-sm" onclick="openOrderForClient()">+ Order</button>
+            </div>
+            <div class="card">
+              <div class="tbl-wrap"><table><thead><tr><th>Order</th><th>Description</th><th>Billed</th><th>Margin</th><th>Status</th><th>ETA</th></tr></thead>
+              <tbody id="client-orders-table"></tbody></table></div>
+            </div>
+          </div>
+        </div>
+        <div id="client-detail-panel">
+          <div class="detail-panel" style="color:var(--text3);text-align:center;padding:40px 20px">
+            <div style="font-size:32px;margin-bottom:10px">🏢</div>
+            <div>Select a client to view details</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ SUPPLIERS CRM ══ -->
+    <div class="view" id="view-suppliers">
+      <div style="display:grid;grid-template-columns:1fr 340px;gap:16px">
+        <div>
+          <div class="sec-head">
+            <div class="sec-title">Suppliers</div>
+            <button class="btn btn-gold" onclick="openModal('m-supplier')">+ Add Supplier</button>
+          </div>
+          <div id="supplier-cards" style="display:grid;grid-template-columns:1fr 1fr;gap:12px"></div>
+          <div id="supplier-empty" style="text-align:center;padding:40px;color:var(--text3)">No suppliers yet.</div>
+        </div>
+        <div id="supplier-detail-panel">
+          <div class="detail-panel" style="color:var(--text3);text-align:center;padding:40px 20px">
+            <div style="font-size:32px;margin-bottom:10px">🏭</div>
+            <div>Select a supplier to view details</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ FOLLOW-UPS ══ -->
+    <div class="view" id="view-followups">
+      <div class="sec-head">
+        <div class="sec-title">Follow-Ups & Reminders</div>
+        <button class="btn btn-gold" onclick="openModal('m-followup')">+ Add Follow-Up</button>
+      </div>
+      <div class="g2" style="margin-bottom:14px">
+        <div class="card">
+          <div class="card-title" style="color:var(--red)">🔴 Overdue</div>
+          <div id="fu-overdue"></div>
+        </div>
+        <div class="card">
+          <div class="card-title" style="color:var(--amber)">🟡 Due Today / This Week</div>
+          <div id="fu-soon"></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">All Follow-Ups</div>
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr><th>Type</th><th>Regarding</th><th>Notes</th><th>Due Date</th><th>Priority</th><th>Status</th><th>Action</th></tr></thead>
+            <tbody id="fu-table"></tbody>
+          </table>
+        </div>
+        <div id="fu-empty" style="text-align:center;padding:30px;color:var(--text3)">No follow-ups. Stay on top of your relationships!</div>
+      </div>
+    </div>
+
+    <!-- ══ ORDERS ══ -->
+    <div class="view" id="view-orders">
+      <div class="sec-head">
+        <div class="sec-title">Orders & Shipments</div>
+        <button class="btn btn-gold" onclick="openModal('m-order')">+ New Order</button>
+      </div>
+      <!-- Pipeline -->
+      <div class="card" style="margin-bottom:14px">
+        <div class="card-title">Shipment Pipeline</div>
+        <div class="pipe-board" id="order-pipeline"></div>
+      </div>
+      <div class="card">
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr><th>Order #</th><th>Client</th><th>Description</th><th>Supplier</th><th>SAP/PO</th><th>Billed</th><th>Cost</th><th>Margin</th><th>Status</th><th>ETA</th><th>Action</th></tr></thead>
+            <tbody id="orders-tbody"></tbody>
+          </table>
+        </div>
+        <div id="orders-empty" style="text-align:center;padding:32px;color:var(--text3)">No orders yet.</div>
+      </div>
+    </div>
+
+    <!-- ══ QUOTES ══ -->
+    <div class="view" id="view-quotes">
+      <div class="sec-head">
+        <div class="sec-title">Quotes</div>
+        <button class="btn btn-gold" onclick="openQuoteBuilder()">+ Build Quote</button>
+      </div>
+      <div class="card">
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr><th>Quote #</th><th>Client</th><th>Items</th><th>Total</th><th>Margin</th><th>Validity</th><th>Status</th><th>Date</th><th>Action</th></tr></thead>
+            <tbody id="quotes-tbody"></tbody>
+          </table>
+        </div>
+        <div id="quotes-empty" style="text-align:center;padding:32px;color:var(--text3)">No quotes yet. Build your first quote.</div>
+      </div>
+    </div>
+
+    <!-- ══ INVOICES ══ -->
+    <div class="view" id="view-invoices">
+      <div class="sec-head">
+        <div class="sec-title">Invoices & Payments</div>
+        <button class="btn btn-gold" onclick="openModal('m-invoice')">+ New Invoice</button>
+      </div>
+      <div class="g3" style="margin-bottom:14px">
+        <div class="card card-sm">
+          <div class="card-title">Outstanding</div>
+          <div class="kpi-num" id="inv-outstanding" style="font-size:26px;color:var(--amber)">R0</div>
+        </div>
+        <div class="card card-sm">
+          <div class="card-title">Collected</div>
+          <div class="kpi-num" id="inv-collected" style="font-size:26px;color:var(--green)">R0</div>
+        </div>
+        <div class="card card-sm">
+          <div class="card-title">Overdue</div>
+          <div class="kpi-num" id="inv-overdue-count" style="font-size:26px;color:var(--red)">0</div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr><th>Invoice #</th><th>Client</th><th>Description</th><th>Excl. VAT</th><th>VAT 15%</th><th>Total</th><th>Due</th><th>Status</th><th>Action</th></tr></thead>
+            <tbody id="invoices-tbody"></tbody>
+          </table>
+        </div>
+        <div id="invoices-empty" style="text-align:center;padding:32px;color:var(--text3)">No invoices yet.</div>
+      </div>
+    </div>
+
+    <!-- ══ DOCUMENTS VAULT ══ -->
+    <div class="view" id="view-documents">
+      <div class="sec-head">
+        <div class="sec-title">Documents Vault</div>
+        <button class="btn btn-gold" onclick="openModal('m-doc')">+ Add Document</button>
+      </div>
+      <!-- Category tabs -->
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px" id="doc-tabs">
+        <button class="btn btn-ghost btn-sm doc-tab active" onclick="filterDocs('all',this)">All</button>
+        <button class="btn btn-ghost btn-sm doc-tab" onclick="filterDocs('Company',this)">🏢 Company</button>
+        <button class="btn btn-ghost btn-sm doc-tab" onclick="filterDocs('Legal',this)">⚖️ Legal</button>
+        <button class="btn btn-ghost btn-sm doc-tab" onclick="filterDocs('Financial',this)">💰 Financial</button>
+        <button class="btn btn-ghost btn-sm doc-tab" onclick="filterDocs('Technical',this)">⚙️ Technical</button>
+        <button class="btn btn-ghost btn-sm doc-tab" onclick="filterDocs('Tender',this)">🏆 Tender</button>
+      </div>
+      <!-- Required docs checklist -->
+      <div class="card" style="margin-bottom:14px">
+        <div class="card-title">Tender Readiness Checklist</div>
+        <div id="doc-checklist" style="display:grid;grid-template-columns:1fr 1fr;gap:8px"></div>
+      </div>
+      <!-- Docs grid -->
+      <div id="doc-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px"></div>
+      <div id="doc-empty" style="text-align:center;padding:40px;color:var(--text3)">No documents yet. Add your company documents to get started.</div>
+    </div>
+
+    <!-- ══ TENDER TRACKER ══ -->
+    <div class="view" id="view-tenders">
+      <div class="sec-head">
+        <div class="sec-title">Tender Tracker</div>
+        <button class="btn btn-gold" onclick="openModal('m-tender')">+ Log Tender</button>
+      </div>
+      <!-- Portal quick links -->
+      <div class="card" style="margin-bottom:14px">
+        <div class="card-title">🔗 SA Tender Portals — Quick Access</div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px">
+          <a href="https://www.etenders.gov.za" target="_blank" class="portal-card">
+            <div class="portal-icon">🏛️</div>
+            <div class="portal-name">eTenders Portal</div>
+            <div class="portal-sub">National Government</div>
+          </a>
+          <a href="https://www.eskom.co.za/procurement" target="_blank" class="portal-card">
+            <div class="portal-icon">⚡</div>
+            <div class="portal-name">Eskom Procurement</div>
+            <div class="portal-sub">Power utility tenders</div>
+          </a>
+          <a href="https://www.cidb.org.za/tenders" target="_blank" class="portal-card">
+            <div class="portal-icon">🏗️</div>
+            <div class="portal-name">CIDB Tenders</div>
+            <div class="portal-sub">Construction industry</div>
+          </a>
+          <a href="https://www.joburg.org.za/tenders" target="_blank" class="portal-card">
+            <div class="portal-icon">🏙️</div>
+            <div class="portal-name">Joburg Municipality</div>
+            <div class="portal-sub">Local government</div>
+          </a>
+          <a href="https://www.tshwane.gov.za/tenders" target="_blank" class="portal-card">
+            <div class="portal-icon">🌆</div>
+            <div class="portal-name">Tshwane Municipality</div>
+            <div class="portal-sub">Local government</div>
+          </a>
+          <a href="https://www.treasury.gov.za/divisions/ocpo/sa/default.aspx" target="_blank" class="portal-card">
+            <div class="portal-icon">💼</div>
+            <div class="portal-name">National Treasury</div>
+            <div class="portal-sub">CSD & procurement</div>
+          </a>
+        </div>
+      </div>
+      <!-- Stats -->
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px" id="tender-stats"></div>
+      <!-- Tender table -->
+      <div class="card">
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr><th>Ref #</th><th>Title</th><th>Client/Org</th><th>Value</th><th>Deadline</th><th>Status</th><th>Docs Ready</th><th>Actions</th></tr></thead>
+            <tbody id="tenders-tbody"></tbody>
+          </table>
+        </div>
+        <div id="tenders-empty" style="text-align:center;padding:32px;color:var(--text3)">No tenders logged yet. Find a tender on the portals above and log it here.</div>
+      </div>
+    </div>
+
+    <!-- ══ AI BID DRAFTER ══ -->
+    <div class="view" id="view-biddrafter">
+      <div class="sec-head">
+        <div class="sec-title">🤖 AI Bid Drafter</div>
+        <button class="btn btn-ghost btn-sm" onclick="clearBidDraft()">Clear</button>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+        <!-- Input panel -->
+        <div style="display:flex;flex-direction:column;gap:12px">
+          <div class="card">
+            <div class="card-title">Tender Details</div>
+            <div style="display:flex;flex-direction:column;gap:10px">
+              <div class="fg"><label>Tender Reference Number</label><input id="bid-ref" placeholder="e.g. RFQ/2025/001"></div>
+              <div class="fg"><label>Issuing Organisation</label><input id="bid-org" placeholder="e.g. Eskom SOC Ltd"></div>
+              <div class="fg"><label>Tender Title</label><input id="bid-title" placeholder="e.g. Supply of Electrical Cables"></div>
+              <div class="fg"><label>Paste Tender Description / Scope</label><textarea id="bid-scope" style="min-height:120px" placeholder="Paste the full tender description, scope of work, or requirements here..."></textarea></div>
+              <div class="fg"><label>Estimated Value (ZAR)</label><input id="bid-value" type="number" placeholder="0.00"></div>
+              <div class="fg"><label>Submission Deadline</label><input id="bid-deadline" type="date"></div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-title">Documents to Reference</div>
+            <div id="bid-doc-checks" style="display:flex;flex-direction:column;gap:6px">
+              <div style="color:var(--text3);font-size:12px">Add documents to your vault first — they'll appear here to include in the bid.</div>
+            </div>
+          </div>
+          <button class="btn btn-gold" onclick="generateBid()" id="gen-btn" style="width:100%;justify-content:center;padding:14px;font-size:15px">
+            ✨ Generate Bid Proposal
+          </button>
+        </div>
+        <!-- Output panel -->
+        <div class="card" style="display:flex;flex-direction:column">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+            <div class="card-title" style="margin-bottom:0">Generated Bid Proposal</div>
+            <div style="display:flex;gap:8px">
+              <button class="btn btn-ghost btn-sm" onclick="copyBid()">📋 Copy</button>
+              <button class="btn btn-green btn-sm" onclick="saveBidAsTender()">💾 Save</button>
+            </div>
+          </div>
+          <div id="bid-output" style="flex:1;background:var(--surface2);border-radius:var(--r);padding:16px;font-size:12px;line-height:1.7;color:var(--text2);min-height:500px;white-space:pre-wrap;overflow-y:auto;font-family:'JetBrains Mono',monospace">
+            Fill in the tender details and click <strong style="color:var(--gold)">Generate Bid Proposal</strong> to create a professional bid document instantly.
+          </div>
+          <div id="bid-generating" style="display:none;text-align:center;padding:40px;color:var(--text3)">
+            <div style="font-size:28px;margin-bottom:10px">⚙️</div>
+            <div style="font-size:13px">Drafting your bid proposal...</div>
+            <div style="font-size:11px;margin-top:6px;color:var(--text3)">This takes about 10–20 seconds</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="view" id="view-catalog">
+      <div class="sec-head">
+        <div class="sec-title">Cable Catalog — SOW/174/002 (57 items)</div>
+        <div style="display:flex;gap:8px">
+          <input type="text" id="cat-search" placeholder="Search by mat no. or description..." style="width:260px" oninput="renderCatalog()">
+          <button class="btn btn-gold" onclick="openModal('m-cable')">+ Add Cable</button>
+        </div>
+      </div>
+      <div class="card">
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr><th>#</th><th>Mat No.</th><th>Description</th><th>5yr Qty</th><th>Cost R/m</th><th>Sell R/m</th><th>Margin</th><th>Potential Revenue</th></tr></thead>
+            <tbody id="catalog-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    </div>
+
+    <!-- ══ CLIENT PORTAL ══ -->
+    <div class="view" id="view-portal">
+      <div style="margin-bottom:16px">
+        <div style="font-family:'Syne',sans-serif;font-size:20px;font-weight:700">Welcome, <span id="portal-welcome-name" style="color:var(--gold)"></span></div>
+        <div style="font-size:12px;color:var(--text3);margin-top:2px">Here are your orders, quotes and invoices from Empirex Legacy Group</div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:16px" id="portal-kpis"></div>
+      <div class="portal-section">
+        <div class="portal-section-title">📦 Your Orders</div>
+        <div class="card"><div class="tbl-wrap"><table>
+          <thead><tr><th>Order</th><th>Description</th><th>Status</th><th>ETA</th></tr></thead>
+          <tbody id="portal-orders"></tbody>
+        </table></div></div>
+      </div>
+      <div class="portal-section">
+        <div class="portal-section-title">📋 Your Quotes</div>
+        <div class="card"><div class="tbl-wrap"><table>
+          <thead><tr><th>Quote</th><th>Title</th><th>Total</th><th>Status</th><th>Date</th></tr></thead>
+          <tbody id="portal-quotes"></tbody>
+        </table></div></div>
+      </div>
+      <div class="portal-section">
+        <div class="portal-section-title">🧾 Your Invoices</div>
+        <div class="card"><div class="tbl-wrap"><table>
+          <thead><tr><th>Invoice</th><th>Description</th><th>Total</th><th>Due</th><th>Status</th></tr></thead>
+          <tbody id="portal-invoices"></tbody>
+        </table></div></div>
+      </div>
+    </div>
+
+  </div><!-- scroll-area -->
+</main>
+
+<!-- USER MENU MODAL -->
+<div class="overlay" id="m-usermenu">
+  <div class="modal" style="max-width:320px;padding:22px">
+    <div class="modal-title" style="font-size:16px" id="um-title">Account</div>
+    <button class="modal-x" onclick="closeModal('m-usermenu')">✕</button>
+    <div id="um-info" style="margin-bottom:16px"></div>
+    <div class="divider"></div>
+    <div style="display:flex;flex-direction:column;gap:8px;margin-top:12px">
+      <button class="btn btn-ghost" style="width:100%;justify-content:center" onclick="changePassword()">🔑 Change Password</button>
+      <button class="btn btn-red" style="width:100%;justify-content:center" onclick="doLogout()">← Sign Out</button>
+    </div>
+  </div>
+</div>
+
+<!-- CLIENT -->
+<div class="overlay" id="m-client">
+  <div class="modal">
+    <div class="modal-title">Add Client</div>
+    <button class="modal-x" onclick="closeModal('m-client')">✕</button>
+    <div class="fgrid">
+      <div class="fg full"><label>Company Name *</label><input id="cl-company" placeholder="e.g. Eskom – Matimba Power Station"></div>
+      <div class="fg"><label>Contact Person *</label><input id="cl-contact"></div>
+      <div class="fg"><label>Designation</label><input id="cl-designation" placeholder="e.g. Supply Manager"></div>
+      <div class="fg"><label>Email</label><input id="cl-email" type="email"></div>
+      <div class="fg"><label>Phone / WhatsApp</label><input id="cl-phone"></div>
+      <div class="fg"><label>How They Send Orders</label><select id="cl-channel"><option>Email</option><option>WhatsApp</option><option>Phone</option><option>Tender/SOW Doc</option><option>All of the above</option></select></div>
+      <div class="fg"><label>Industry</label><input id="cl-industry" placeholder="e.g. Power Generation"></div>
+      <div class="fg full"><label>Address</label><textarea id="cl-address"></textarea></div>
+      <div class="fg full"><label>Notes</label><textarea id="cl-notes" placeholder="Key contacts, preferences, payment terms..."></textarea></div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" onclick="closeModal('m-client')">Cancel</button>
+      <button class="btn btn-gold" onclick="saveClient()">Save Client</button>
+    </div>
+  </div>
+</div>
+
+<!-- SUPPLIER -->
+<div class="overlay" id="m-supplier">
+  <div class="modal">
+    <div class="modal-title">Add Supplier</div>
+    <button class="modal-x" onclick="closeModal('m-supplier')">✕</button>
+    <div class="fgrid">
+      <div class="fg full"><label>Company Name *</label><input id="su-company" placeholder="e.g. Aberdare Cables"></div>
+      <div class="fg"><label>Contact Person</label><input id="su-contact"></div>
+      <div class="fg"><label>Email</label><input id="su-email" type="email"></div>
+      <div class="fg"><label>Phone / WhatsApp</label><input id="su-phone"></div>
+      <div class="fg"><label>Cable Specialties</label><input id="su-specialty" placeholder="e.g. HV XLPE, Mining Trailing"></div>
+      <div class="fg"><label>Average Lead Time</label><input id="su-lead" placeholder="e.g. 15 working days"></div>
+      <div class="fg"><label>ISO 9001 Certified</label><select id="su-iso"><option>Yes</option><option>No</option><option>Pending</option></select></div>
+      <div class="fg"><label>Rating (1–5)</label><input id="su-rating" type="number" min="1" max="5" value="5"></div>
+      <div class="fg"><label>Payment Terms</label><input id="su-terms" placeholder="e.g. 30 days EOM"></div>
+      <div class="fg full"><label>Notes</label><textarea id="su-notes" placeholder="Pricing notes, reliability, contact preferences..."></textarea></div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" onclick="closeModal('m-supplier')">Cancel</button>
+      <button class="btn btn-gold" onclick="saveSupplier()">Save Supplier</button>
+    </div>
+  </div>
+</div>
+
+<!-- ORDER -->
+<div class="overlay" id="m-order">
+  <div class="modal">
+    <div class="modal-title">New Order</div>
+    <button class="modal-x" onclick="closeModal('m-order')">✕</button>
+    <div class="fgrid">
+      <div class="fg"><label>Client *</label><select id="or-client"></select></div>
+      <div class="fg"><label>Supplier</label><select id="or-supplier"></select></div>
+      <div class="fg full"><label>Description / Cable Reference *</label><input id="or-desc" placeholder="e.g. 3x35mm² XLPE 3.3kV 2500m (Mat 641780)"></div>
+      <div class="fg"><label>Client Price (ZAR)</label><input id="or-cprice" type="number" placeholder="0.00" oninput="calcOrderMargin()"></div>
+      <div class="fg"><label>Your Cost (ZAR)</label><input id="or-cost" type="number" placeholder="0.00" oninput="calcOrderMargin()"></div>
+      <div class="fg"><label>Gross Margin</label><input id="or-margin" readonly style="color:var(--green)"></div>
+      <div class="fg"><label>SAP Task Order #</label><input id="or-sap" placeholder="SAP-XXXX"></div>
+      <div class="fg"><label>Client PO #</label><input id="or-po" placeholder="PO-XXXX"></div>
+      <div class="fg"><label>Received Via</label><select id="or-via"><option>Email</option><option>WhatsApp</option><option>Phone</option><option>Tender Doc</option></select></div>
+      <div class="fg"><label>Expected Delivery</label><input id="or-eta" type="date"></div>
+      <div class="fg full"><label>Notes</label><textarea id="or-notes"></textarea></div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" onclick="closeModal('m-order')">Cancel</button>
+      <button class="btn btn-gold" onclick="saveOrder()">Create Order</button>
+    </div>
+  </div>
+</div>
+
+<!-- QUOTE BUILDER -->
+<div class="overlay" id="m-quote">
+  <div class="modal modal-wide">
+    <div class="modal-title">Quote Builder</div>
+    <button class="modal-x" onclick="closeModal('m-quote')">✕</button>
+    <div class="fgrid" style="margin-bottom:14px">
+      <div class="fg"><label>Client *</label><select id="qu-client"></select></div>
+      <div class="fg"><label>Valid For (days)</label><input id="qu-validity" type="number" value="30"></div>
+      <div class="fg full"><label>Quote Title / Reference</label><input id="qu-title" placeholder="e.g. Cable Supply per SOW/174/002 — Item 13, 14, 23"></div>
+    </div>
+    <div class="divider"></div>
+    <div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--text3);margin-bottom:8px">Line Items</div>
+    <div style="display:grid;grid-template-columns:2.5fr 0.7fr 1fr 1fr auto;gap:8px;margin-bottom:6px;padding:0 2px">
+      <div style="font-size:10px;color:var(--text3);letter-spacing:1px">DESCRIPTION</div>
+      <div style="font-size:10px;color:var(--text3);letter-spacing:1px">QTY (m)</div>
+      <div style="font-size:10px;color:var(--text3);letter-spacing:1px">COST R/m</div>
+      <div style="font-size:10px;color:var(--text3);letter-spacing:1px">SELL R/m</div>
+      <div></div>
+    </div>
+    <div id="qu-lines"></div>
+    <button class="btn btn-ghost btn-sm" onclick="addQLine()" style="margin-top:6px">+ Add Line</button>
+    <div class="totals-bar">
+      <div><div class="tot-label">Total (Excl. VAT)</div><div class="tot-val" id="qu-total" style="color:var(--gold)">R0.00</div></div>
+      <div><div class="tot-label">Total (Incl. VAT 15%)</div><div class="tot-val" id="qu-total-vat" style="color:var(--gold)">R0.00</div></div>
+      <div><div class="tot-label">Your Margin</div><div class="tot-val" id="qu-margin" style="color:var(--green)">R0.00</div></div>
+      <div><div class="tot-label">Margin %</div><div class="tot-val" id="qu-margin-pct" style="color:var(--green)">0%</div></div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" onclick="closeModal('m-quote')">Cancel</button>
+      <button class="btn btn-gold" onclick="saveQuote()">Save Quote</button>
+    </div>
+  </div>
+</div>
+
+<!-- INVOICE -->
+<div class="overlay" id="m-invoice">
+  <div class="modal">
+    <div class="modal-title">New Invoice</div>
+    <button class="modal-x" onclick="closeModal('m-invoice')">✕</button>
+    <div class="fgrid">
+      <div class="fg"><label>Client *</label><select id="in-client"></select></div>
+      <div class="fg"><label>Link to Order</label><select id="in-order"><option value="">— None —</option></select></div>
+      <div class="fg full"><label>Description</label><input id="in-desc" placeholder="e.g. Supply of XLPE Cables per SOW/174/002"></div>
+      <div class="fg"><label>Amount Excl. VAT (ZAR) *</label><input id="in-amount" type="number" placeholder="0.00" oninput="calcInvVat()"></div>
+      <div class="fg"><label>VAT 15% (auto)</label><input id="in-vat" readonly style="color:var(--text3)"></div>
+      <div class="fg"><label>Total Incl. VAT</label><input id="in-total-display" readonly style="color:var(--gold);font-weight:700"></div>
+      <div class="fg"><label>Client PO #</label><input id="in-po"></div>
+      <div class="fg"><label>Due Date</label><input id="in-due" type="date"></div>
+      <div class="fg full"><label>Payment Terms</label><input id="in-terms" placeholder="e.g. 30 days from invoice date"></div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" onclick="closeModal('m-invoice')">Cancel</button>
+      <button class="btn btn-gold" onclick="saveInvoice()">Issue Invoice</button>
+    </div>
+  </div>
+</div>
+
+<!-- FOLLOW-UP -->
+<div class="overlay" id="m-followup">
+  <div class="modal">
+    <div class="modal-title">Add Follow-Up</div>
+    <button class="modal-x" onclick="closeModal('m-followup')">✕</button>
+    <div class="fgrid">
+      <div class="fg"><label>Type</label><select id="fu-type"><option>Supplier Follow-Up</option><option>Client Follow-Up</option><option>Payment Chase</option><option>Quote Follow-Up</option><option>Delivery Check</option><option>General Reminder</option></select></div>
+      <div class="fg"><label>Priority</label><select id="fu-priority"><option>High</option><option>Medium</option><option>Low</option></select></div>
+      <div class="fg"><label>Contact / Company</label><input id="fu-contact" placeholder="Who to follow up with"></div>
+      <div class="fg"><label>Due Date</label><input id="fu-date" type="date"></div>
+      <div class="fg full"><label>Notes / What to say</label><textarea id="fu-notes" placeholder="What needs to be done or said..."></textarea></div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" onclick="closeModal('m-followup')">Cancel</button>
+      <button class="btn btn-gold" onclick="saveFollowup()">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- CABLE -->
+<div class="overlay" id="m-cable">
+  <div class="modal">
+    <div class="modal-title">Add Cable to Catalog</div>
+    <button class="modal-x" onclick="closeModal('m-cable')">✕</button>
+    <div class="fgrid">
+      <div class="fg"><label>Material Number</label><input id="cb-matno"></div>
+      <div class="fg"><label>5-Year Qty Estimate (m)</label><input id="cb-qty" type="number"></div>
+      <div class="fg full"><label>Description *</label><textarea id="cb-desc"></textarea></div>
+      <div class="fg"><label>Your Cost (R/m)</label><input id="cb-cost" type="number" oninput="calcCableMargin()"></div>
+      <div class="fg"><label>Sell Price (R/m)</label><input id="cb-sell" type="number" oninput="calcCableMargin()"></div>
+      <div class="fg full"><label>Calculated Margin</label><input id="cb-margin" readonly style="color:var(--green)"></div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" onclick="closeModal('m-cable')">Cancel</button>
+      <button class="btn btn-gold" onclick="saveCable()">Add to Catalog</button>
+    </div>
+  </div>
+</div>
+
+<!-- DOCUMENT -->
+<div class="overlay" id="m-doc">
+  <div class="modal">
+    <div class="modal-title">Add Document</div>
+    <button class="modal-x" onclick="closeModal('m-doc')">✕</button>
+    <div class="fgrid">
+      <div class="fg full"><label>Document Name *</label><input id="dc-name" placeholder="e.g. B-BBEE Certificate 2025"></div>
+      <div class="fg"><label>Category *</label>
+        <select id="dc-cat">
+          <option>Company</option><option>Legal</option><option>Financial</option><option>Technical</option><option>Tender</option>
+        </select>
+      </div>
+      <div class="fg"><label>Document Type</label>
+        <select id="dc-type">
+          <option>B-BBEE Certificate</option><option>Tax Clearance Certificate</option><option>CIPC Registration</option>
+          <option>Company Profile</option><option>ISO Certificate</option><option>Bank Statement</option>
+          <option>Audited Financials</option><option>CIDB Certificate</option><option>Letter of Good Standing</option>
+          <option>Past Bid/Proposal</option><option>SOW Document</option><option>Other</option>
+        </select>
+      </div>
+      <div class="fg"><label>Expiry Date (if any)</label><input id="dc-expiry" type="date"></div>
+      <div class="fg full"><label>Notes</label><textarea id="dc-notes" placeholder="Reference number, issuing body, version..."></textarea></div>
+      <div class="fg full">
+        <label>Upload File</label>
+        <input type="file" id="dc-file" accept=".pdf,.doc,.docx,.jpg,.png,.xlsx" style="padding:8px;cursor:pointer">
+        <div style="font-size:10px;color:var(--text3);margin-top:4px">Supported: PDF, Word, Excel, Images</div>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" onclick="closeModal('m-doc')">Cancel</button>
+      <button class="btn btn-gold" onclick="saveDoc()">Save Document</button>
+    </div>
+  </div>
+</div>
+
+<!-- TENDER -->
+<div class="overlay" id="m-tender">
+  <div class="modal">
+    <div class="modal-title">Log Tender</div>
+    <button class="modal-x" onclick="closeModal('m-tender')">✕</button>
+    <div class="fgrid">
+      <div class="fg"><label>Tender Reference # *</label><input id="td-ref" placeholder="e.g. RFQ/ESKOM/2025/001"></div>
+      <div class="fg"><label>Portal / Source</label>
+        <select id="td-portal">
+          <option>eTenders Portal</option><option>Eskom Procurement</option><option>CIDB</option>
+          <option>Joburg Municipality</option><option>Tshwane Municipality</option><option>National Treasury</option><option>Other</option>
+        </select>
+      </div>
+      <div class="fg full"><label>Tender Title *</label><input id="td-title" placeholder="e.g. Supply and Delivery of Electrical Cables"></div>
+      <div class="fg full"><label>Issuing Organisation</label><input id="td-org" placeholder="e.g. Eskom SOC Ltd – Matimba Power Station"></div>
+      <div class="fg"><label>Estimated Value (ZAR)</label><input id="td-value" type="number" placeholder="0.00"></div>
+      <div class="fg"><label>Submission Deadline *</label><input id="td-deadline" type="date"></div>
+      <div class="fg"><label>Briefing Session Date</label><input id="td-brief" type="date"></div>
+      <div class="fg"><label>Status</label>
+        <select id="td-status">
+          <option>Identified</option><option>Documents Gathering</option><option>Bid In Progress</option>
+          <option>Submitted</option><option>Awarded</option><option>Lost</option><option>Withdrawn</option>
+        </select>
+      </div>
+      <div class="fg full"><label>Scope Summary</label><textarea id="td-scope" placeholder="Brief description of what the tender is for..."></textarea></div>
+      <div class="fg full"><label>Requirements / Notes</label><textarea id="td-notes" placeholder="Key requirements, special conditions, contact person..."></textarea></div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" onclick="closeModal('m-tender')">Cancel</button>
+      <button class="btn btn-gold" onclick="saveTender()">Save Tender</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+// ══════════════════════════════════════════
+//  DATA STORE
+// ══════════════════════════════════════════
+let D = {
+  clients:[], suppliers:[], orders:[], quotes:[], invoices:[], followups:[], catalog:[],
+  documents:[], tenders:[],
+  counters:{order:1,quote:1,invoice:1,followup:1,doc:1,tender:1},
+  activity:[]
+};
+
+const COLORS = ['#3B82F6','#10B981','#8B5CF6','#F59E0B','#EF4444','#06B6D4','#EC4899','#F97316'];
+
+async function save(){
+  try{ await window.storage.set('elg-crm-v2', JSON.stringify(D)); }catch(e){}
+}
+async function load(){
+  try{
+    const r = await window.storage.get('elg-crm-v2');
+    if(r){ D = JSON.parse(r.value); }
+    initCatalog();
+    renderAll();
+    updateBadges();
+  }catch(e){ initCatalog(); renderAll(); }
+}
+
+// ══════════════════════════════════════════
+//  SIDEBAR TOGGLE
+// ══════════════════════════════════════════
+function openSidebar(){
+  document.getElementById('sidebar').classList.add('open');
+  document.getElementById('backdrop').classList.add('open');
+}
+function closeSidebar(){
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('backdrop').classList.remove('open');
+}
+
+// ══════════════════════════════════════════
+//  NAV
+// ══════════════════════════════════════════
+const PAGE_TITLES = {dashboard:'Dashboard',clients:'Clients',suppliers:'Suppliers',followups:'Follow-Ups',orders:'Orders & Shipments',quotes:'Quotes',invoices:'Invoices & Payments',catalog:'Cable Catalog',documents:'Documents Vault',tenders:'Tender Tracker',biddrafter:'AI Bid Drafter',portal:'My Portal'};
+const CTA = {dashboard:'+ New Order',clients:'+ Add Client',suppliers:'+ Add Supplier',followups:'+ Follow-Up',orders:'+ New Order',quotes:'+ Build Quote',invoices:'+ New Invoice',catalog:'+ Add Cable',documents:'+ Add Document',tenders:'+ Log Tender',biddrafter:'Clear Draft',portal:''};
+const CTA_FN = {dashboard:'openModal(\'m-order\')',clients:'openModal(\'m-client\')',suppliers:'openModal(\'m-supplier\')',followups:'openModal(\'m-followup\')',orders:'openModal(\'m-order\')',quotes:'openQuoteBuilder()',invoices:'openModal(\'m-invoice\')',catalog:'openModal(\'m-cable\')',documents:'openModal(\'m-doc\')',tenders:'openModal(\'m-tender\')',biddrafter:'clearBidDraft()',portal:''};
+
+function nav(el){
+  const v = el.dataset.view;
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  el.classList.add('active');
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  document.getElementById('view-'+v).classList.add('active');
+  document.getElementById('page-title').textContent = PAGE_TITLES[v];
+  document.getElementById('topbar-cta').textContent = CTA[v];
+  document.getElementById('topbar-cta').setAttribute('onclick', CTA_FN[v]);
+  if(v==='orders'||v==='quotes'||v==='invoices') populateSelects();
+  if(v==='clients') selectedClient = null;
+  closeSidebar();
+}
+function topbarAction(){}
+
+// ══════════════════════════════════════════
+//  MODALS
+// ══════════════════════════════════════════
+function openModal(id){
+  populateSelects();
+  if(id==='m-quote'){ qLines=[]; renderQLines(); }
+  document.getElementById(id).classList.add('open');
+}
+function closeModal(id){ document.getElementById(id).classList.remove('open'); }
+function openQuoteBuilder(){ openModal('m-quote'); }
+
+// ══════════════════════════════════════════
+//  TOAST & ACTIVITY
+// ══════════════════════════════════════════
+function toast(msg,color='var(--green)'){
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.style.background=color;
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2600);
+}
+function addActivity(text,color='var(--blue)'){
+  D.activity.unshift({text,color,time:new Date().toLocaleString('en-ZA')});
+  if(D.activity.length>30)D.activity.pop();
+}
+
+// ══════════════════════════════════════════
+//  SELECTS POPULATE
+// ══════════════════════════════════════════
+function populateSelects(){
+  const clientOpts = '<option value="">Select client...</option>'+D.clients.map(c=>`<option value="${c.id}">${c.company}</option>`).join('');
+  const supplierOpts = '<option value="">Select supplier...</option>'+D.suppliers.map(s=>`<option value="${s.id}">${s.company}</option>`).join('');
+  ['or-client','qu-client','in-client'].forEach(id=>{ const el=document.getElementById(id); if(el) el.innerHTML=clientOpts; });
+  ['or-supplier'].forEach(id=>{ const el=document.getElementById(id); if(el) el.innerHTML=supplierOpts; });
+  const inOrder = document.getElementById('in-order');
+  if(inOrder){ inOrder.innerHTML='<option value="">— None —</option>'+D.orders.map(o=>`<option value="${o.id}">ORD-${pad(o.id)} — ${o.clientName}</option>`).join(''); }
+}
+
+function pad(n){ return String(n).padStart(3,'0'); }
+
+// ══════════════════════════════════════════
+//  CLIENTS
+// ══════════════════════════════════════════
+let selectedClient = null;
+
+function saveClient(){
+  const c = {
+    id:Date.now(), color:COLORS[D.clients.length%COLORS.length],
+    company:v('cl-company'), contact:v('cl-contact'), designation:v('cl-designation'),
+    email:v('cl-email'), phone:v('cl-phone'), channel:v('cl-channel'),
+    industry:v('cl-industry'), address:v('cl-address'), notes:v('cl-notes'),
+    created:today()
+  };
+  if(!c.company){toast('Company name required','var(--red)');return;}
+  D.clients.push(c);
+  addActivity(`Client added: ${c.company}`,'var(--blue)');
+  clearFields(['cl-company','cl-contact','cl-designation','cl-email','cl-phone','cl-address','cl-notes']);
+  save(); renderClients(); updateBadges(); closeModal('m-client'); toast('✓ Client saved!');
+}
+
+function renderClients(){
+  const cont = document.getElementById('client-cards');
+  const empty = document.getElementById('client-empty');
+  empty.style.display = D.clients.length ? 'none' : 'block';
+  cont.innerHTML = D.clients.map(c => {
+    const orders = D.orders.filter(o=>o.clientId===c.id);
+    const val = orders.reduce((s,o)=>s+(o.cprice||0),0);
+    const initials = c.company.split(' ').map(w=>w[0]).join('').substring(0,2).toUpperCase();
+    return `<div class="contact-card ${selectedClient===c.id?'selected':''}" onclick="selectClient(${c.id})">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+        <div class="av" style="background:${c.color}22;color:${c.color}">${initials}</div>
+        <div><div class="contact-name">${c.company}</div><div class="contact-role">${c.channel||'—'}</div></div>
+        <button onclick="event.stopPropagation();deleteClient(${c.id})" style="margin-left:auto;background:none;border:none;color:var(--text3);cursor:pointer;font-size:14px">✕</button>
+      </div>
+      <div class="contact-detail">
+        <span>👤 ${c.contact||'—'} ${c.designation?'· '+c.designation:''}</span>
+        <span>📧 ${c.email||'—'}</span>
+        <span>📞 ${c.phone||'—'}</span>
+        <span style="margin-top:4px;display:flex;justify-content:space-between">
+          <span class="pill p-blue">${orders.length} orders</span>
+          <span class="mono" style="font-size:11px;color:var(--gold)">R${val.toLocaleString()}</span>
+        </span>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function selectClient(id){
+  selectedClient = id;
+  const c = D.clients.find(x=>x.id===id);
+  if(!c)return;
+  renderClients();
+  const orders = D.orders.filter(o=>o.clientId===id);
+  const invs = D.invoices.filter(i=>i.clientId===id);
+  const initials = c.company.split(' ').map(w=>w[0]).join('').substring(0,2).toUpperCase();
+  const totalBilled = orders.reduce((s,o)=>s+(o.cprice||0),0);
+  const totalPaid = invs.filter(i=>i.status==='Paid').reduce((s,i)=>s+i.total,0);
+  document.getElementById('client-detail-panel').innerHTML = `
+    <div class="detail-panel">
+      <div class="detail-header">
+        <div class="detail-av" style="background:${c.color}22;color:${c.color}">${initials}</div>
+        <div>
+          <div class="detail-name">${c.company}</div>
+          <div class="detail-sub">${c.industry||''}</div>
+        </div>
+      </div>
+      <div class="info-row"><span class="info-label">Contact</span><span class="info-val">${c.contact||'—'}</span></div>
+      <div class="info-row"><span class="info-label">Role</span><span class="info-val">${c.designation||'—'}</span></div>
+      <div class="info-row"><span class="info-label">Email</span><span class="info-val"><a href="mailto:${c.email}" style="color:var(--blue)">${c.email||'—'}</a></span></div>
+      <div class="info-row"><span class="info-label">Phone</span><span class="info-val">${c.phone||'—'}</span></div>
+      <div class="info-row"><span class="info-label">Orders via</span><span class="info-val">${c.channel||'—'}</span></div>
+      <div class="info-row"><span class="info-label">Total Orders</span><span class="info-val">${orders.length}</span></div>
+      <div class="info-row"><span class="info-label">Total Billed</span><span class="info-val mono" style="color:var(--gold)">R${totalBilled.toLocaleString()}</span></div>
+      <div class="info-row"><span class="info-label">Total Paid</span><span class="info-val mono" style="color:var(--green)">R${totalPaid.toLocaleString()}</span></div>
+      ${c.notes?`<div style="margin-top:12px;padding:10px;background:var(--surface2);border-radius:var(--r);font-size:12px;color:var(--text2)">${c.notes}</div>`:''}
+      <div style="margin-top:14px;display:flex;gap:8px;flex-wrap:wrap">
+        <button class="btn btn-gold btn-sm" onclick="openOrderForClient()">+ Order</button>
+        <button class="btn btn-blue btn-sm" onclick="openQuoteForClient()">+ Quote</button>
+        <button class="btn btn-ghost btn-sm" onclick="openFollowupForClient()">+ Follow-Up</button>
+      </div>
+    </div>`;
+  // Show orders below
+  const osec = document.getElementById('client-orders-section');
+  osec.style.display='block';
+  document.getElementById('client-orders-title').textContent=`Orders for ${c.company}`;
+  const otb = document.getElementById('client-orders-table');
+  if(!orders.length){otb.innerHTML='<tr><td colspan="6" style="color:var(--text3);text-align:center;padding:16px">No orders yet</td></tr>';return;}
+  otb.innerHTML = orders.map(o=>`<tr>
+    <td class="mono" style="color:var(--gold)">ORD-${pad(o.id)}</td>
+    <td>${o.desc}</td>
+    <td class="mono">R${(o.cprice||0).toLocaleString()}</td>
+    <td class="mono" style="color:var(--green)">R${((o.cprice||0)-(o.cost||0)).toLocaleString()}</td>
+    <td>${statusPill(o.status)}</td>
+    <td>${o.eta||'—'}</td>
+  </tr>`).join('');
+}
+
+function openOrderForClient(){
+  populateSelects();
+  if(selectedClient){ setTimeout(()=>{ const el=document.getElementById('or-client'); if(el)el.value=selectedClient; },50); }
+  openModal('m-order');
+}
+function openQuoteForClient(){
+  populateSelects();
+  if(selectedClient){ setTimeout(()=>{ const el=document.getElementById('qu-client'); if(el)el.value=selectedClient; },50); }
+  openModal('m-quote');
+}
+function openFollowupForClient(){
+  const c = D.clients.find(x=>x.id===selectedClient);
+  if(c){ setTimeout(()=>{ const el=document.getElementById('fu-contact'); if(el)el.value=c.company; },50); }
+  openModal('m-followup');
+}
+
+function deleteClient(id){
+  D.clients=D.clients.filter(c=>c.id!==id);
+  if(selectedClient===id){ selectedClient=null; document.getElementById('client-detail-panel').innerHTML='<div class="detail-panel" style="color:var(--text3);text-align:center;padding:40px 20px"><div style="font-size:32px;margin-bottom:10px">🏢</div><div>Select a client</div></div>'; }
+  save(); renderClients(); updateBadges();
+}
+
+// ══════════════════════════════════════════
+//  SUPPLIERS
+// ══════════════════════════════════════════
+let selectedSupplier = null;
+
+function saveSupplier(){
+  const s = {
+    id:Date.now(), color:COLORS[(D.suppliers.length+3)%COLORS.length],
+    company:v('su-company'), contact:v('su-contact'), email:v('su-email'),
+    phone:v('su-phone'), specialty:v('su-specialty'), lead:v('su-lead'),
+    iso:v('su-iso'), rating:v('su-rating'), terms:v('su-terms'), notes:v('su-notes'),
+    created:today()
+  };
+  if(!s.company){toast('Company name required','var(--red)');return;}
+  D.suppliers.push(s);
+  addActivity(`Supplier added: ${s.company}`,'var(--purple)');
+  clearFields(['su-company','su-contact','su-email','su-phone','su-specialty','su-lead','su-notes','su-terms']);
+  save(); renderSuppliers(); closeModal('m-supplier'); toast('✓ Supplier saved!');
+}
+
+function renderSuppliers(){
+  const cont = document.getElementById('supplier-cards');
+  const empty = document.getElementById('supplier-empty');
+  empty.style.display = D.suppliers.length ? 'none' : 'block';
+  cont.innerHTML = D.suppliers.map(s => {
+    const stars = '★'.repeat(Math.max(0,Math.min(5,parseInt(s.rating)||5)));
+    const initials = s.company.split(' ').map(w=>w[0]).join('').substring(0,2).toUpperCase();
+    const orders = D.orders.filter(o=>o.supplierId===s.id);
+    return `<div class="contact-card ${selectedSupplier===s.id?'selected':''}" onclick="selectSupplier(${s.id})">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+        <div class="av" style="background:${s.color}22;color:${s.color}">${initials}</div>
+        <div><div class="contact-name">${s.company}</div><div class="contact-role" style="color:var(--purple)">${s.specialty||'General'}</div></div>
+        <button onclick="event.stopPropagation();deleteSupplier(${s.id})" style="margin-left:auto;background:none;border:none;color:var(--text3);cursor:pointer;font-size:14px">✕</button>
+      </div>
+      <div class="contact-detail">
+        <span>👤 ${s.contact||'—'}</span>
+        <span>📧 ${s.email||'—'}</span>
+        <span>🕐 Lead: ${s.lead||'—'}</span>
+        <span style="margin-top:4px;display:flex;justify-content:space-between">
+          <span style="color:var(--gold);font-size:13px">${stars}</span>
+          <span class="pill ${s.iso==='Yes'?'p-green':'p-grey'}">ISO ${s.iso}</span>
+        </span>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function selectSupplier(id){
+  selectedSupplier=id;
+  const s=D.suppliers.find(x=>x.id===id);
+  if(!s)return;
+  renderSuppliers();
+  const orders=D.orders.filter(o=>o.supplierId===id);
+  const initials=s.company.split(' ').map(w=>w[0]).join('').substring(0,2).toUpperCase();
+  document.getElementById('supplier-detail-panel').innerHTML=`
+    <div class="detail-panel">
+      <div class="detail-header">
+        <div class="detail-av" style="background:${s.color}22;color:${s.color}">${initials}</div>
+        <div><div class="detail-name">${s.company}</div><div class="detail-sub">${s.specialty||''}</div></div>
+      </div>
+      <div class="info-row"><span class="info-label">Contact</span><span class="info-val">${s.contact||'—'}</span></div>
+      <div class="info-row"><span class="info-label">Email</span><span class="info-val"><a href="mailto:${s.email}" style="color:var(--blue)">${s.email||'—'}</a></span></div>
+      <div class="info-row"><span class="info-label">Phone</span><span class="info-val">${s.phone||'—'}</span></div>
+      <div class="info-row"><span class="info-label">Lead Time</span><span class="info-val">${s.lead||'—'}</span></div>
+      <div class="info-row"><span class="info-label">ISO 9001</span><span class="info-val"><span class="pill ${s.iso==='Yes'?'p-green':'p-grey'}">${s.iso}</span></span></div>
+      <div class="info-row"><span class="info-label">Payment Terms</span><span class="info-val">${s.terms||'—'}</span></div>
+      <div class="info-row"><span class="info-label">Orders Placed</span><span class="info-val">${orders.length}</span></div>
+      ${s.notes?`<div style="margin-top:12px;padding:10px;background:var(--surface2);border-radius:var(--r);font-size:12px;color:var(--text2)">${s.notes}</div>`:''}
+      <div style="margin-top:14px;display:flex;gap:8px">
+        <button class="btn btn-gold btn-sm" onclick="openOrderForSupplier(${s.id})">+ Order</button>
+        <button class="btn btn-ghost btn-sm" onclick="openFollowupForSupplier('${s.company}')">+ Follow-Up</button>
+      </div>
+    </div>`;
+}
+
+function openOrderForSupplier(supId){
+  populateSelects();
+  setTimeout(()=>{ const el=document.getElementById('or-supplier'); if(el)el.value=supId; },50);
+  openModal('m-order');
+}
+function openFollowupForSupplier(name){
+  setTimeout(()=>{ const el=document.getElementById('fu-contact'); if(el)el.value=name; },50);
+  openModal('m-followup');
+}
+function deleteSupplier(id){ D.suppliers=D.suppliers.filter(s=>s.id!==id); save(); renderSuppliers(); }
+
+// ══════════════════════════════════════════
+//  FOLLOW-UPS
+// ══════════════════════════════════════════
+function saveFollowup(){
+  const fu={
+    id:D.counters.followup++, type:v('fu-type'), priority:v('fu-priority'),
+    contact:v('fu-contact'), date:v('fu-date'), notes:v('fu-notes'),
+    status:'Pending', created:today()
+  };
+  D.followups.push(fu);
+  addActivity(`Follow-up: ${fu.type} — ${fu.contact}`,'var(--amber)');
+  clearFields(['fu-contact','fu-date','fu-notes']);
+  save(); renderFollowups(); updateBadges(); closeModal('m-followup'); toast('✓ Follow-up saved!');
+}
+
+function renderFollowups(){
+  const todayStr=today();
+  const weekLater=new Date(); weekLater.setDate(weekLater.getDate()+7);
+  const weekStr=weekLater.toISOString().split('T')[0];
+  const pending=D.followups.filter(f=>f.status==='Pending');
+  const overdue=pending.filter(f=>f.date&&f.date<todayStr);
+  const soon=pending.filter(f=>f.date&&f.date>=todayStr&&f.date<=weekStr);
+
+  document.getElementById('fu-overdue').innerHTML = overdue.length
+    ? overdue.map(f=>fuCard(f,'urgent')).join('')
+    : '<div style="color:var(--text3);font-size:12px;padding:8px">None overdue 🎉</div>';
+
+  document.getElementById('fu-soon').innerHTML = soon.length
+    ? soon.map(f=>fuCard(f,'warn')).join('')
+    : '<div style="color:var(--text3);font-size:12px;padding:8px">Nothing due this week</div>';
+
+  const tb=document.getElementById('fu-table');
+  const empty=document.getElementById('fu-empty');
+  empty.style.display=D.followups.length?'none':'block';
+  const pColors={High:'var(--red)',Medium:'var(--amber)',Low:'var(--green)'};
+  tb.innerHTML=D.followups.map(f=>`<tr>
+    <td><span class="pill p-blue">${f.type}</span></td>
+    <td>${f.contact||'—'}</td>
+    <td style="max-width:200px;font-size:12px">${f.notes||'—'}</td>
+    <td class="mono">${f.date||'—'}</td>
+    <td><span style="color:${pColors[f.priority]};font-weight:600;font-size:12px">${f.priority}</span></td>
+    <td>${f.status==='Done'?'<span class="pill p-green">Done</span>':'<span class="pill p-gold">Pending</span>'}</td>
+    <td style="white-space:nowrap">
+      ${f.status!=='Done'?`<button class="btn btn-green btn-xs" onclick="doneFollowup(${f.id})">✓ Done</button>`:''} 
+      <button class="btn btn-ghost btn-xs" onclick="deleteFollowup(${f.id})">✕</button>
+    </td>
+  </tr>`).join('');
+}
+
+function fuCard(f,cls){
+  return `<div class="followup-item ${cls}">
+    <div style="flex:1">
+      <div style="font-size:12px;font-weight:600">${f.type} — ${f.contact}</div>
+      <div style="font-size:11px;color:var(--text3)">${f.notes||''}</div>
+    </div>
+    <div style="text-align:right;flex-shrink:0">
+      <div style="font-size:11px;color:var(--text3)">${f.date||''}</div>
+      <button class="btn btn-green btn-xs" style="margin-top:4px" onclick="doneFollowup(${f.id})">✓ Done</button>
+    </div>
+  </div>`;
+}
+
+function doneFollowup(id){
+  const f=D.followups.find(x=>x.id===id);
+  if(f)f.status='Done';
+  addActivity(`Follow-up completed: ${f?.contact}`,'var(--green)');
+  save(); renderFollowups(); updateBadges(); toast('✓ Follow-up done!');
+}
+function deleteFollowup(id){ D.followups=D.followups.filter(f=>f.id!==id); save(); renderFollowups(); updateBadges(); }
+
+// ══════════════════════════════════════════
+//  ORDERS
+// ══════════════════════════════════════════
+function calcOrderMargin(){
+  const cp=parseFloat(document.getElementById('or-cprice').value)||0;
+  const c=parseFloat(document.getElementById('or-cost').value)||0;
+  const m=cp-c;
+  const pct=cp?((m/cp)*100).toFixed(1):0;
+  const el=document.getElementById('or-margin');
+  el.value=`R${m.toLocaleString('en-ZA')} (${pct}%)`;
+  el.style.color=m>=0?'var(--green)':'var(--red)';
+}
+
+const ORDER_STAGES=['Pending','Ordered','In Transit','Quality Check','Delivered'];
+
+function saveOrder(){
+  const clientId=parseInt(v('or-client'));
+  const supplierId=parseInt(v('or-supplier'))||null;
+  const client=D.clients.find(c=>c.id===clientId);
+  const supplier=D.suppliers.find(s=>s.id===supplierId);
+  const cprice=parseFloat(v('or-cprice'))||0;
+  const cost=parseFloat(v('or-cost'))||0;
+  const o={
+    id:D.counters.order++, clientId, supplierId,
+    clientName:client?.company||'Unknown',
+    supplierName:supplier?.company||'—',
+    desc:v('or-desc'), cprice, cost, margin:cprice-cost,
+    sap:v('or-sap'), po:v('or-po'), via:v('or-via'),
+    eta:v('or-eta'), notes:v('or-notes'),
+    status:'Pending', created:today()
+  };
+  if(!o.desc){toast('Description required','var(--red)');return;}
+  if(!clientId){toast('Select a client','var(--red)');return;}
+  D.orders.push(o);
+  addActivity(`Order ORD-${pad(o.id)} — ${o.clientName} R${cprice.toLocaleString()}`,'var(--gold)');
+  // Auto-create follow-up for supplier if set
+  if(supplier){
+    D.followups.push({id:D.counters.followup++,type:'Supplier Follow-Up',priority:'High',contact:supplier.company,date:o.eta||'',notes:`Confirm order ORD-${pad(o.id)}: ${o.desc}`,status:'Pending',created:today()});
+  }
+  clearFields(['or-desc','or-cprice','or-cost','or-sap','or-po','or-eta','or-notes']); document.getElementById('or-margin').value='';
+  save(); renderOrders(); renderDashboard(); updateBadges(); closeModal('m-order'); toast('✓ Order created!');
+}
+
+function statusPill(s){
+  const map={Pending:'p-grey',Ordered:'p-blue','In Transit':'p-gold','Quality Check':'p-purple',Delivered:'p-green',Cancelled:'p-red'};
+  return `<span class="pill ${map[s]||'p-grey'}">${s}</span>`;
+}
+
+function renderOrders(){
+  const tb=document.getElementById('orders-tbody');
+  const empty=document.getElementById('orders-empty');
+  empty.style.display=D.orders.length?'none':'block';
+  tb.innerHTML=D.orders.map(o=>{
+    const m=o.cprice-o.cost;
+    const mPct=o.cprice?((m/o.cprice)*100).toFixed(1):0;
+    const nextStages=ORDER_STAGES.slice(ORDER_STAGES.indexOf(o.status)+1,ORDER_STAGES.indexOf(o.status)+2);
+    return `<tr>
+      <td class="mono" style="color:var(--gold)">ORD-${pad(o.id)}</td>
+      <td>${o.clientName}</td>
+      <td style="max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:12px" title="${o.desc}">${o.desc}</td>
+      <td>${o.supplierName}</td>
+      <td class="mono" style="font-size:11px">${o.sap||o.po||'—'}</td>
+      <td class="mono">R${(o.cprice||0).toLocaleString()}</td>
+      <td class="mono">R${(o.cost||0).toLocaleString()}</td>
+      <td class="mono" style="color:var(--green)">R${m.toLocaleString()} <span style="color:var(--text3)">(${mPct}%)</span></td>
+      <td>${statusPill(o.status)}</td>
+      <td style="font-size:11px">${o.eta||'—'}</td>
+      <td style="white-space:nowrap">
+        ${nextStages.map(ns=>`<button class="btn btn-ghost btn-xs" onclick="advanceOrder(${o.id},'${ns}')">→ ${ns}</button>`).join('')}
+        <button class="btn btn-ghost btn-xs" onclick="deleteOrder(${o.id})">✕</button>
+      </td>
+    </tr>`;
+  }).join('');
+  renderPipeline('order-pipeline');
+}
+
+function advanceOrder(id,status){
+  const o=D.orders.find(x=>x.id===id);
+  if(o){
+    o.status=status;
+    addActivity(`ORD-${pad(id)} → ${status}`,status==='Delivered'?'var(--green)':'var(--gold)');
+    if(status==='Delivered'){
+      // Auto-create invoice follow-up
+      D.followups.push({id:D.counters.followup++,type:'Payment Chase',priority:'Medium',contact:o.clientName,date:'',notes:`Invoice for ORD-${pad(id)}: ${o.desc}`,status:'Pending',created:today()});
+    }
+  }
+  save(); renderOrders(); renderDashboard(); updateBadges(); toast(`Status: ${status}`);
+}
+function deleteOrder(id){ D.orders=D.orders.filter(o=>o.id!==id); save(); renderOrders(); renderDashboard(); }
+
+function renderPipeline(elId){
+  const el=document.getElementById(elId);
+  if(!el)return;
+  el.innerHTML=ORDER_STAGES.map(s=>{
+    const items=D.orders.filter(o=>o.status===s);
+    const pill_colors={Pending:'p-grey',Ordered:'p-blue','In Transit':'p-gold','Quality Check':'p-purple',Delivered:'p-green'};
+    return `<div class="pipe-col">
+      <div class="pipe-head">${s}<span class="pill ${pill_colors[s]}">${items.length}</span></div>
+      ${items.slice(0,4).map(o=>`<div class="pipe-card">
+        <div class="pipe-card-id">ORD-${pad(o.id)}</div>
+        <div class="pipe-card-name">${o.clientName}</div>
+        <div class="pipe-card-val mono">R${(o.cprice||0).toLocaleString()}</div>
+      </div>`).join('')}
+      ${items.length>4?`<div style="font-size:10px;color:var(--text3);text-align:center">+${items.length-4} more</div>`:''}
+    </div>`;
+  }).join('');
+}
+
+// ══════════════════════════════════════════
+//  QUOTES
+// ══════════════════════════════════════════
+let qLines=[];
+function addQLine(){ qLines.push({desc:'',qty:0,cost:0,sell:0}); renderQLines(); }
+function renderQLines(){
+  document.getElementById('qu-lines').innerHTML=qLines.map((l,i)=>`
+    <div class="qline">
+      <input type="text" placeholder="Description / mat no." value="${l.desc}" oninput="updateQL(${i},'desc',this.value)">
+      <input type="number" placeholder="0" value="${l.qty||''}" oninput="updateQL(${i},'qty',this.value)" style="text-align:right">
+      <input type="number" placeholder="0.00" value="${l.cost||''}" oninput="updateQL(${i},'cost',this.value)" style="text-align:right">
+      <input type="number" placeholder="0.00" value="${l.sell||''}" oninput="updateQL(${i},'sell',this.value)" style="text-align:right">
+      <button onclick="qLines.splice(${i},1);renderQLines()" style="background:none;border:none;color:var(--red);cursor:pointer;font-size:15px">✕</button>
+    </div>`).join('');
+  calcQTotals();
+}
+function updateQL(i,f,val){ qLines[i][f]=f==='desc'?val:parseFloat(val)||0; calcQTotals(); }
+function calcQTotals(){
+  let total=0,cost=0;
+  qLines.forEach(l=>{ total+=(l.sell||0)*(l.qty||0); cost+=(l.cost||0)*(l.qty||0); });
+  const margin=total-cost;
+  const pct=total?((margin/total)*100).toFixed(1):0;
+  document.getElementById('qu-total').textContent='R'+total.toFixed(2);
+  document.getElementById('qu-total-vat').textContent='R'+(total*1.15).toFixed(2);
+  document.getElementById('qu-margin').textContent='R'+margin.toFixed(2);
+  document.getElementById('qu-margin-pct').textContent=pct+'%';
+}
+function saveQuote(){
+  const clientId=parseInt(v('qu-client'));
+  const client=D.clients.find(c=>c.id===clientId);
+  if(!client){toast('Select a client','var(--red)');return;}
+  if(!qLines.length){toast('Add at least one line','var(--red)');return;}
+  let total=0,cost=0;
+  qLines.forEach(l=>{total+=(l.sell||0)*(l.qty||0);cost+=(l.cost||0)*(l.qty||0);});
+  const q={
+    id:D.counters.quote++, clientId, clientName:client.company,
+    title:v('qu-title'), lines:[...qLines],
+    total, cost, margin:total-cost,
+    validity:v('qu-validity')||'30',
+    status:'Pending', created:today()
+  };
+  D.quotes.push(q);
+  addActivity(`Quote Q-${pad(q.id)} — ${client.company} R${total.toLocaleString()}`,'var(--blue)');
+  qLines=[]; renderQLines();
+  save(); renderQuotes(); renderDashboard(); closeModal('m-quote'); toast('✓ Quote saved!');
+}
+function renderQuotes(){
+  const tb=document.getElementById('quotes-tbody');
+  const empty=document.getElementById('quotes-empty');
+  empty.style.display=D.quotes.length?'none':'block';
+  tb.innerHTML=D.quotes.map(q=>{
+    const pct=q.total?((q.margin/q.total)*100).toFixed(1):0;
+    return `<tr>
+      <td class="mono" style="color:var(--gold)">Q-${pad(q.id)}</td>
+      <td>${q.clientName}</td>
+      <td style="font-size:11px">${q.lines.length} line(s)${q.title?' · '+q.title:''}</td>
+      <td class="mono">R${q.total.toFixed(2)}</td>
+      <td class="mono" style="color:var(--green)">${pct}%</td>
+      <td>${q.validity} days</td>
+      <td><select class="pill" style="background:transparent;border:1px solid var(--border2);font-size:11px;padding:3px 8px;border-radius:20px;color:var(--text2)" onchange="updateQuoteStatus(${q.id},this.value)">
+        ${['Pending','Accepted','Rejected','Expired'].map(s=>`<option ${q.status===s?'selected':''}>${s}</option>`).join('')}
+      </select></td>
+      <td style="font-size:11px">${q.created}</td>
+      <td>
+        ${q.status==='Accepted'?`<button class="btn btn-green btn-xs" onclick="quoteToOrder(${q.id})">→ Order</button>`:''} 
+        <button class="btn btn-ghost btn-xs" onclick="deleteQuote(${q.id})">✕</button>
+      </td>
+    </tr>`;
+  }).join('');
+}
+function updateQuoteStatus(id,s){ const q=D.quotes.find(x=>x.id===id); if(q)q.status=s; save(); renderQuotes(); renderDashboard(); }
+function quoteToOrder(qId){
+  const q=D.quotes.find(x=>x.id===qId);
+  if(!q)return;
+  populateSelects();
+  setTimeout(()=>{
+    document.getElementById('or-client').value=q.clientId;
+    document.getElementById('or-desc').value=q.title||`From Quote Q-${pad(q.id)}`;
+    document.getElementById('or-cprice').value=q.total;
+    document.getElementById('or-cost').value=q.cost;
+    calcOrderMargin();
+  },50);
+  openModal('m-order');
+}
+function deleteQuote(id){ D.quotes=D.quotes.filter(q=>q.id!==id); save(); renderQuotes(); renderDashboard(); }
+
+// ══════════════════════════════════════════
+//  INVOICES
+// ══════════════════════════════════════════
+function calcInvVat(){
+  const amt=parseFloat(document.getElementById('in-amount').value)||0;
+  document.getElementById('in-vat').value='R'+(amt*0.15).toFixed(2);
+  document.getElementById('in-total-display').value='R'+(amt*1.15).toFixed(2);
+}
+function saveInvoice(){
+  const clientId=parseInt(v('in-client'));
+  const client=D.clients.find(c=>c.id===clientId);
+  const amount=parseFloat(v('in-amount'))||0;
+  if(!client){toast('Select a client','var(--red)');return;}
+  if(!amount){toast('Enter amount','var(--red)');return;}
+  const inv={
+    id:D.counters.invoice++, clientId, clientName:client.company,
+    desc:v('in-desc'), amount, vat:amount*0.15, total:amount*1.15,
+    po:v('in-po'), due:v('in-due'), terms:v('in-terms'),
+    orderId:v('in-order'), status:'Unpaid', created:today()
+  };
+  D.invoices.push(inv);
+  addActivity(`Invoice INV-${pad(inv.id)} — ${client.company} R${inv.total.toFixed(2)}`,'var(--green)');
+  clearFields(['in-desc','in-amount','in-vat','in-total-display','in-po','in-due','in-terms']);
+  save(); renderInvoices(); renderDashboard(); updateBadges(); closeModal('m-invoice'); toast('✓ Invoice issued!');
+}
+function renderInvoices(){
+  const tb=document.getElementById('invoices-tbody');
+  const empty=document.getElementById('invoices-empty');
+  empty.style.display=D.invoices.length?'none':'block';
+  const todayStr=today();
+  let outstanding=0,collected=0,overdueCount=0;
+  D.invoices.forEach(i=>{ if(i.status==='Paid')collected+=i.total; else outstanding+=i.total; if(i.status!=='Paid'&&i.due&&i.due<todayStr)overdueCount++; });
+  document.getElementById('inv-outstanding').textContent='R'+outstanding.toFixed(2);
+  document.getElementById('inv-collected').textContent='R'+collected.toFixed(2);
+  document.getElementById('inv-overdue-count').textContent=overdueCount;
+  tb.innerHTML=D.invoices.map(i=>{
+    const overdue=i.status!=='Paid'&&i.due&&i.due<todayStr;
+    const stPill=i.status==='Paid'?'p-green':overdue?'p-red':'p-gold';
+    return `<tr>
+      <td class="mono" style="color:var(--gold)">INV-${pad(i.id)}</td>
+      <td>${i.clientName}</td>
+      <td style="font-size:12px">${i.desc||'—'}</td>
+      <td class="mono">R${i.amount.toFixed(2)}</td>
+      <td class="mono">R${i.vat.toFixed(2)}</td>
+      <td class="mono"><strong>R${i.total.toFixed(2)}</strong></td>
+      <td style="font-size:11px;color:${overdue?'var(--red)':'inherit'}">${i.due||'—'}${overdue?' ⚠️':''}</td>
+      <td><span class="pill ${stPill}">${overdue&&i.status!=='Paid'?'Overdue':i.status}</span></td>
+      <td style="white-space:nowrap">
+        ${i.status!=='Paid'?`<button class="btn btn-green btn-xs" onclick="markPaid(${i.id})">✓ Paid</button>`:''} 
+        <button class="btn btn-ghost btn-xs" onclick="deleteInvoice(${i.id})">✕</button>
+      </td>
+    </tr>`;
+  }).join('');
+}
+function markPaid(id){
+  const i=D.invoices.find(x=>x.id===id);
+  if(i){i.status='Paid';addActivity(`INV-${pad(id)} PAID — R${i.total.toFixed(2)}`,'var(--green)');}
+  save(); renderInvoices(); renderDashboard(); updateBadges(); toast('💰 Invoice marked as paid!');
+}
+function deleteInvoice(id){ D.invoices=D.invoices.filter(i=>i.id!==id); save(); renderInvoices(); renderDashboard(); updateBadges(); }
+
+// ══════════════════════════════════════════
+//  CATALOG
+// ══════════════════════════════════════════
+const DEFAULT_CATALOG=[
+  {id:1,matno:'145012',desc:'PANZERFLEX TRAILING, 11KV, CU TINNED, Neoprene, Coal Stacker',qty5yr:2000},
+  {id:2,matno:'144974',desc:'10MM² 4C CU PVC ARMOURED Direct Burial 500V-1KV',qty5yr:500},
+  {id:3,matno:'145285',desc:'TRAILING 10MM² 4C CU MULTISTRAND Rubber (H07RNF)',qty5yr:750},
+  {id:4,matno:'630105',desc:'LIGHTNING PROTECTION 95MM² CU/STL WOVEN Anti-Theft 1KV',qty5yr:10000},
+  {id:5,matno:'14476',desc:'ARMOURED 16MM² 4C CU PVC 1KV STL Wire (BVX4HCV)',qty5yr:1000},
+  {id:6,matno:'144975',desc:'TRAILING 16MM² 4C CU PVC/Rubber (BRR4HCN)',qty5yr:1000},
+  {id:7,matno:'145040',desc:'ARMOURED 185MM² 3C CU PVC 3.3KV (CVX3SCV)',qty5yr:1500},
+  {id:8,matno:'145031',desc:'CATENARY FLAT 2.5MM² 8C CU Neoprene 35x7mm',qty5yr:200},
+  {id:9,matno:'144972',desc:'ARMOURED 2.5MM² 4C CU PVC (SC20.5605)',qty5yr:500},
+  {id:10,matno:'14484',desc:'DIRECT BURIAL 2.5MM² 19C CU STL Wire 1KV (BVX19DCV)',qty5yr:1000},
+  {id:11,matno:'645551',desc:'INDUSTRIAL 1.5MM² 3C CU 230V AL/PVC',qty5yr:2500},
+  {id:12,matno:'646486',desc:'INDUSTRIAL 1.5MM² 3C CU 230V AL/PVC',qty5yr:2500},
+  {id:13,matno:'641780',desc:'XLPE ARMOURED UNDERGROUND 35MM² 3C CU 3.3KV 90°C',qty5yr:2500},
+  {id:14,matno:'144996',desc:'FLEXIBLE TRAILING MINING 25MM² 3C 3.8/6.6KV Rubber (CRR3KCR)',qty5yr:20000},
+  {id:15,matno:'217825',desc:'ARMOURED XLPE 300MM² 1C 6.6KV PVC AWA Halogen Free',qty5yr:1500},
+  {id:16,matno:'241594',desc:'SURFEX 2.5MM² 3C CU 300-500V AL/Plastic (L31RR0023A)',qty5yr:3000},
+  {id:17,matno:'144978',desc:'HV TRAILING 35MM² 3C CU 3300V Rubber + Pilot (CRR4LCR)',qty5yr:3000},
+  {id:18,matno:'145092',desc:'SUPER WELDING 35MM² 1C CU 300A PVC Nitrile Grey',qty5yr:2000},
+  {id:19,matno:'144973',desc:'DIRECT BURIAL 4MM² 4C CU PVC (SC20:5605)',qty5yr:2000},
+  {id:20,matno:'145029',desc:'CATENARY FLAT TRAILING 4MM² 4C CU PVC',qty5yr:1000},
+  {id:21,matno:'145282',desc:'TRAILING 4MM² 4C CU MULTISTRAND Neoprene',qty5yr:2000},
+  {id:22,matno:'719022',desc:'TRAILING 95MM² 1C CU 450-750V Black Rubber H07RN/F 192A',qty5yr:1500},
+  {id:23,matno:'636087',desc:'LOW HALOGEN 6.6KV 35MM² 3C CU Polyurethane Conveyors (DXE03LCM)',qty5yr:1500},
+  {id:24,matno:'241702',desc:'UNARMOURED 35MM² 4C CU 600/1000V LH Blue Stripe (BVV04LCM)',qty5yr:500},
+  {id:25,matno:'724333',desc:'ARMOURED POWER 2.5MM² 4C CU 600-1000V Halogen Free (BVX4DCJ)',qty5yr:1500},
+  {id:26,matno:'724332',desc:'ARMOURED POWER 4MM² 4C CU 600-1000V Halogen Free (BVX4ECJ)',qty5yr:1500},
+  {id:27,matno:'145043',desc:'LV ARMOURED 70MM² 4C CU 600-1000V PVC (BVX4NCV)',qty5yr:1000},
+  {id:28,matno:'145041',desc:'ARMOURED 95MM² 4C CU 1KV PVC (BVX4PCV)',qty5yr:1000},
+  {id:29,matno:'724246',desc:'FLEXI FLAT RIBBON CABLE 16C CU Black',qty5yr:500},
+  {id:30,matno:'14530',desc:'BUILDING WIRE 16MM² 7-STRAND CU PVC 600V-1KV Single Core',qty5yr:500},
+  {id:31,matno:'749874',desc:'INDUSTRIAL 300MM² 1C CU 3300V STL Wire PVC (CVX1UCV)',qty5yr:500},
+  {id:32,matno:'750016',desc:'INDUSTRIAL 35MM² 3C CU 3300V STL Wire (CVX3LCV)',qty5yr:500},
+  {id:33,matno:'750015',desc:'INDUSTRIAL 25MM² 3C CU 3300V STL Wire (CVX3KCV)',qty5yr:500},
+  {id:34,matno:'750014',desc:'INDUSTRIAL 120MM² 4C CU 3300V STL Wire (CVX4QCV)',qty5yr:500},
+  {id:35,matno:'750013',desc:'XLPE 22KV 150MM² 3C CU STL Wire (FXE3RCV)',qty5yr:500},
+  {id:36,matno:'750025',desc:'XLPE 6.6KV 95MM² 3C CU Cu Screen+STL Wire (DXE3PCV)',qty5yr:500},
+  {id:37,matno:'750024',desc:'XLPE 6.6KV 150MM² 3C CU Cu Screen+STL Wire (DXE3RCV)',qty5yr:500},
+  {id:38,matno:'750020',desc:'XLPE 6.6KV 300MM² 1C CU Cu Screen+STL Wire (DXE1UCV)',qty5yr:500},
+  {id:39,matno:'750022',desc:'INDUSTRIAL 630MM² 1C CU 1000V STL Wire (BVX1XCV)',qty5yr:500},
+  {id:40,matno:'750021',desc:'XLPE 11KV 150MM² 3C CU Cu Screen+STL Wire (EXE3RCV)',qty5yr:500},
+  {id:41,matno:'750023',desc:'XLPE 11KV 300MM² 1C CU Cu Screen+STL Wire (EXE1UCV)',qty5yr:500},
+  {id:42,matno:'750019',desc:'XLPE 11KV 95MM² 3C CU Cu Screen+STL Wire (EXE3PCV)',qty5yr:500},
+  {id:43,matno:'750018',desc:'XLPE 22KV 500MM² 1C CU Cu Screen+STL Wire (FXE1WCV)',qty5yr:500},
+  {id:44,matno:'400635',desc:'ARMOURED 4MM² 7C CU 600-1000V STL Wire (BVX7ECV)',qty5yr:500},
+  {id:45,matno:'750297',desc:'ARMOURED 35MM² 4C CU 1000V STL Wire (BVX4LCV)',qty5yr:500},
+  {id:46,matno:'750296',desc:'ARMOURED 2.5MM² 7C CU 1000V STL Wire (BVX7DCV)',qty5yr:500},
+  {id:47,matno:'750258',desc:'XLPE 11KV 500MM² 1C CU Cu Screen+STL Wire (EXE1WCV)',qty5yr:500},
+  {id:48,matno:'751828',desc:'FLEXIBLE 185MM² 1C CU Class 5 1.8/3KV EPR (NSGAFOU)',qty5yr:500},
+  {id:49,matno:'755169',desc:'LOW HALOGEN ARMOURED 2.5MM² 3C CU 600/1000V (BVX3DCM)',qty5yr:500},
+  {id:50,matno:'755170',desc:'LOW HALOGEN ARMOURED 4MM² 3C CU 600/1000V (BVX3ECM)',qty5yr:500},
+  {id:51,matno:'755172',desc:'LOW HALOGEN ARMOURED 6MM² 3C CU 600/1000V (BVX3FCM)',qty5yr:500},
+  {id:52,matno:'755175',desc:'LOW HALOGEN ARMOURED 10MM² 3C CU 600/1000V (BVX3GCM)',qty5yr:500},
+  {id:53,matno:'755238',desc:'LOW HALOGEN ARMOURED 16MM² 3C CU 600/1000V (BVX3HCM)',qty5yr:500},
+  {id:54,matno:'756584',desc:'LOW HALOGEN ARMOURED 50MM² 3C CU 600/1000V (BVX3MCM)',qty5yr:500},
+  {id:55,matno:'755239',desc:'LOW HALOGEN ARMOURED 25MM² 4C CU 600/1000V (BVX4KCM)',qty5yr:500},
+  {id:56,matno:'0756189',desc:'TRAILING REELING 3×50+16+2×10MM² 1.9/3.3KV Ash Stacker',qty5yr:2000},
+  {id:57,matno:'0756190',desc:'TRAILING REELING 3×35+16+2×10MM² 1.9/3.3KV Ash Spreader',qty5yr:2000},
+].map(c=>({...c,cost:0,sell:0}));
+
+function initCatalog(){ if(!D.catalog||!D.catalog.length) D.catalog=DEFAULT_CATALOG.map(c=>({...c})); }
+
+function renderCatalog(){
+  const q=(document.getElementById('cat-search')?.value||'').toLowerCase();
+  const items=q?D.catalog.filter(c=>c.desc.toLowerCase().includes(q)||c.matno.includes(q)):D.catalog;
+  document.getElementById('catalog-tbody').innerHTML=items.map(c=>{
+    const margin=c.sell&&c.cost?((((c.sell-c.cost)/c.sell)*100).toFixed(1)+'%'):'—';
+    const mColor=c.sell&&c.cost?'var(--green)':'var(--text3)';
+    const potential=c.sell&&c.qty5yr?'R'+((c.sell-c.cost)*c.qty5yr).toLocaleString():'—';
+    return `<tr>
+      <td style="color:var(--text3);font-size:11px">${c.id}</td>
+      <td class="mono" style="color:var(--gold);font-size:11px">${c.matno}</td>
+      <td style="font-size:12px;max-width:280px">${c.desc}</td>
+      <td>${c.qty5yr?.toLocaleString()||'—'}</td>
+      <td><input type="number" value="${c.cost||''}" placeholder="0.00" style="width:80px;font-size:12px;padding:4px 8px" oninput="updateCatalog(${c.id},'cost',this.value)"></td>
+      <td><input type="number" value="${c.sell||''}" placeholder="0.00" style="width:80px;font-size:12px;padding:4px 8px" oninput="updateCatalog(${c.id},'sell',this.value)"></td>
+      <td class="mono" style="color:${mColor};font-size:12px">${margin}</td>
+      <td class="mono" style="color:var(--text3);font-size:11px">${potential}</td>
+    </tr>`;
+  }).join('');
+}
+function updateCatalog(id,field,val){
+  const c=D.catalog.find(x=>x.id===id);
+  if(c)c[field]=parseFloat(val)||0;
+  save(); renderCatalog();
+}
+function calcCableMargin(){
+  const cost=parseFloat(document.getElementById('cb-cost').value)||0;
+  const sell=parseFloat(document.getElementById('cb-sell').value)||0;
+  document.getElementById('cb-margin').value=sell?((((sell-cost)/sell)*100).toFixed(1)+'% margin'):'—';
+}
+function saveCable(){
+  const c={id:Date.now(),matno:v('cb-matno'),desc:v('cb-desc'),qty5yr:parseInt(v('cb-qty'))||0,cost:parseFloat(v('cb-cost'))||0,sell:parseFloat(v('cb-sell'))||0};
+  if(!c.desc){toast('Description required','var(--red)');return;}
+  D.catalog.push(c);
+  clearFields(['cb-matno','cb-desc','cb-qty','cb-cost','cb-sell','cb-margin']);
+  save(); renderCatalog(); closeModal('m-cable'); toast('✓ Cable added!');
+}
+
+// ══════════════════════════════════════════
+//  DASHBOARD
+// ══════════════════════════════════════════
+function renderDashboard(){
+  const activeOrders=D.orders.filter(o=>!['Delivered','Cancelled'].includes(o.status)).length;
+  const collected=D.invoices.filter(i=>i.status==='Paid').reduce((s,i)=>s+i.total,0);
+  const openQuotes=D.quotes.filter(q=>q.status==='Pending').length;
+  const todayStr=today();
+  const overdueInv=D.invoices.filter(i=>i.status!=='Paid'&&i.due&&i.due<todayStr).length;
+  const pendingFU=D.followups.filter(f=>f.status==='Pending'&&f.date&&f.date<todayStr).length;
+
+  document.getElementById('kpi-orders').textContent=activeOrders;
+  document.getElementById('kpi-collected').textContent=collected>=1000?'R'+Math.round(collected/1000)+'K':'R'+Math.round(collected);
+  document.getElementById('kpi-quotes').textContent=openQuotes;
+  document.getElementById('kpi-alerts').textContent=overdueInv+pendingFU;
+
+  renderPipeline('dash-pipeline');
+
+  // Margin
+  const totalRev=D.orders.reduce((s,o)=>s+(o.cprice||0),0);
+  const totalCost=D.orders.reduce((s,o)=>s+(o.cost||0),0);
+  const totalMargin=totalRev-totalCost;
+  const mPct=totalRev?((totalMargin/totalRev)*100).toFixed(1):0;
+  document.getElementById('margin-summary').innerHTML=`
+    <div><div style="font-size:10px;color:var(--text3);letter-spacing:1px;text-transform:uppercase;margin-bottom:4px">Total Billed</div><div style="font-family:'Syne',sans-serif;font-size:24px;color:var(--blue)">R${totalRev.toLocaleString()}</div></div>
+    <div><div style="font-size:10px;color:var(--text3);letter-spacing:1px;text-transform:uppercase;margin-bottom:4px">Gross Margin</div><div style="font-family:'Syne',sans-serif;font-size:24px;color:var(--green)">R${totalMargin.toLocaleString()}</div></div>
+    <div><div style="font-size:10px;color:var(--text3);letter-spacing:1px;text-transform:uppercase;margin-bottom:4px">Margin %</div><div style="font-family:'Syne',sans-serif;font-size:24px;color:var(--gold)">${mPct}%</div></div>`;
+
+  // Urgent follow-ups
+  const urgentFU=D.followups.filter(f=>f.status==='Pending'&&f.date&&f.date<=todayStr).slice(0,4);
+  document.getElementById('dash-followups').innerHTML=urgentFU.length
+    ? urgentFU.map(f=>`<div class="followup-item urgent" style="margin-bottom:6px">
+        <div style="flex:1"><div style="font-size:12px;font-weight:600">${f.type}</div><div style="font-size:11px;color:var(--text3)">${f.contact}</div></div>
+        <button class="btn btn-green btn-xs" onclick="doneFollowup(${f.id});renderDashboard()">✓</button>
+      </div>`).join('')
+    : '<div style="color:var(--text3);font-size:12px;padding:6px">No urgent follow-ups 🎉</div>';
+
+  // Activity
+  const feed=document.getElementById('dash-activity');
+  feed.innerHTML=D.activity.slice(0,6).map(a=>`
+    <div class="act-item">
+      <div class="act-dot" style="background:${a.color}"></div>
+      <div><div class="act-text">${a.text}</div><div class="act-time">${a.time}</div></div>
+    </div>`).join('') || '<div style="color:var(--text3);font-size:12px;padding:6px">No recent activity</div>';
+}
+
+// ══════════════════════════════════════════
+//  BADGES
+// ══════════════════════════════════════════
+function updateBadges(){
+  const todayStr=today();
+  const fuCount=D.followups.filter(f=>f.status==='Pending'&&f.date&&f.date<=todayStr).length;
+  const invCount=D.invoices.filter(i=>i.status!=='Paid'&&i.due&&i.due<todayStr).length;
+  const clinb=document.getElementById('nb-clients');
+  clinb.style.display=D.clients.length?'inline':'none'; clinb.textContent=D.clients.length;
+  const funb=document.getElementById('nb-followups');
+  funb.style.display=fuCount?'inline':'none'; funb.textContent=fuCount;
+  const invnb=document.getElementById('nb-invoices');
+  invnb.style.display=invCount?'inline':'none'; invnb.textContent=invCount;
+}
+
+// ══════════════════════════════════════════
+//  GLOBAL SEARCH
+// ══════════════════════════════════════════
+function globalSearch(q){
+  if(!q.trim())return;
+  // Just highlight matching nav items conceptually — simple UX hint
+}
+
+// ══════════════════════════════════════════
+//  UTILITIES
+// ══════════════════════════════════════════
+function v(id){ return document.getElementById(id)?.value?.trim()||''; }
+function today(){ return new Date().toISOString().split('T')[0]; }
+function clearFields(ids){ ids.forEach(id=>{ const el=document.getElementById(id); if(el)el.value=''; }); }
+
+
+function renderAll(){
+  renderDashboard();
+  renderClients();
+  renderSuppliers();
+  renderFollowups();
+  renderOrders();
+  renderQuotes();
+  renderInvoices();
+  renderCatalog();
+  renderDocs();
+  renderTenders();
+  renderBidDocChecks();
+}
+
+// ══════════════════════════════════════════
+//  DOCUMENTS VAULT
+// ══════════════════════════════════════════
+const REQUIRED_DOCS = [
+  {type:'Tax Clearance Certificate',icon:'📄'},
+  {type:'B-BBEE Certificate',icon:'🏅'},
+  {type:'CIPC Registration',icon:'🏛️'},
+  {type:'Company Profile',icon:'🏢'},
+  {type:'Audited Financials',icon:'💰'},
+  {type:'CIDB Certificate',icon:'🏗️'},
+  {type:'Letter of Good Standing',icon:'✉️'},
+  {type:'ISO Certificate',icon:'✅'},
+];
+
+const DOC_ICONS = {
+  'Company':'🏢','Legal':'⚖️','Financial':'💰','Technical':'⚙️','Tender':'🏆'
+};
+
+let docFilter = 'all';
+
+function saveDoc(){
+  const fileEl = document.getElementById('dc-file');
+  const file = fileEl.files[0];
+  const expiry = v('dc-expiry');
+  const today = new Date().toISOString().split('T')[0];
+  const doc = {
+    id: D.counters.doc++,
+    name: v('dc-name'),
+    category: v('dc-cat'),
+    type: v('dc-type'),
+    expiry: expiry||null,
+    notes: v('dc-notes'),
+    filename: file ? file.name : null,
+    filesize: file ? (file.size/1024).toFixed(1)+'KB' : null,
+    created: today
+  };
+  if(!doc.name){ toast('Document name required','var(--red)'); return; }
+  D.documents.push(doc);
+  addActivity(`Document added: ${doc.name}`,'var(--purple)');
+  clearFields(['dc-name','dc-notes','dc-expiry']);
+  fileEl.value='';
+  save(); renderDocs(); renderBidDocChecks(); updateBadges(); closeModal('m-doc');
+  toast('✓ Document saved!');
+}
+
+function filterDocs(cat, el){
+  docFilter = cat;
+  document.querySelectorAll('.doc-tab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  renderDocs();
+}
+
+function renderDocs(){
+  const today = new Date().toISOString().split('T')[0];
+  const weekFromNow = new Date(); weekFromNow.setDate(weekFromNow.getDate()+30);
+  const wStr = weekFromNow.toISOString().split('T')[0];
+
+  // Checklist
+  document.getElementById('doc-checklist').innerHTML = REQUIRED_DOCS.map(r=>{
+    const has = D.documents.find(d=>d.type===r.type);
+    return `<div class="check-item">
+      <div class="check-dot ${has?'ok':'missing'}">${has?'✓':'✕'}</div>
+      <span>${r.icon} ${r.type}</span>
+      ${has?`<span class="pill p-green" style="margin-left:auto;font-size:9px">✓ On file</span>`:`<span class="pill p-red" style="margin-left:auto;font-size:9px">Missing</span>`}
+    </div>`;
+  }).join('');
+
+  // Docs grid
+  const filtered = docFilter==='all' ? D.documents : D.documents.filter(d=>d.category===docFilter);
+  const empty = document.getElementById('doc-empty');
+  const grid = document.getElementById('doc-grid');
+  empty.style.display = filtered.length ? 'none' : 'block';
+  grid.innerHTML = filtered.map(doc=>{
+    const expired = doc.expiry && doc.expiry < today;
+    const expiring = doc.expiry && doc.expiry >= today && doc.expiry <= wStr;
+    const cls = expired?'expired':expiring?'expiring':'';
+    const expiryColor = expired?'var(--red)':expiring?'var(--amber)':'var(--text3)';
+    return `<div class="doc-card ${cls}">
+      <div class="doc-icon">${DOC_ICONS[doc.category]||'📄'}</div>
+      <div class="doc-name">${doc.name}</div>
+      <div class="doc-type">${doc.type} · <span class="pill p-blue" style="font-size:9px">${doc.category}</span></div>
+      ${doc.filename?`<div style="font-size:10px;color:var(--text3)">📎 ${doc.filename} (${doc.filesize})</div>`:''}
+      ${doc.expiry?`<div class="doc-expiry" style="color:${expiryColor}">
+        ${expired?'⚠️ Expired':expiring?'⚠️ Expiring soon':'📅 Expires'}: ${doc.expiry}
+      </div>`:''}
+      ${doc.notes?`<div style="font-size:10px;color:var(--text3);margin-top:4px">${doc.notes}</div>`:''}
+      <div class="doc-actions">
+        <button class="btn btn-ghost btn-xs" onclick="deleteDoc(${doc.id})">Remove</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function deleteDoc(id){
+  D.documents = D.documents.filter(d=>d.id!==id);
+  save(); renderDocs(); renderBidDocChecks(); toast('Document removed','var(--amber)');
+}
+
+// ══════════════════════════════════════════
+//  TENDER TRACKER
+// ══════════════════════════════════════════
+function saveTender(){
+  const td = {
+    id: D.counters.tender++,
+    ref: v('td-ref'), portal: v('td-portal'),
+    title: v('td-title'), org: v('td-org'),
+    value: parseFloat(v('td-value'))||0,
+    deadline: v('td-deadline'), brief: v('td-brief'),
+    status: v('td-status'), scope: v('td-scope'), notes: v('td-notes'),
+    created: today()
+  };
+  if(!td.ref||!td.title){ toast('Reference and title required','var(--red)'); return; }
+  D.tenders.push(td);
+  addActivity(`Tender logged: ${td.title}`,'var(--gold)');
+  clearFields(['td-ref','td-title','td-org','td-value','td-deadline','td-brief','td-scope','td-notes']);
+  save(); renderTenders(); updateBadges(); closeModal('m-tender');
+  toast('✓ Tender logged!');
+}
+
+function renderTenders(){
+  const tb = document.getElementById('tenders-tbody');
+  const empty = document.getElementById('tenders-empty');
+  const todayStr = today();
+
+  // Stats
+  const active = D.tenders.filter(t=>!['Awarded','Lost','Withdrawn'].includes(t.status));
+  const awarded = D.tenders.filter(t=>t.status==='Awarded');
+  const overdue = D.tenders.filter(t=>t.deadline&&t.deadline<todayStr&&!['Awarded','Lost','Withdrawn','Submitted'].includes(t.status));
+  const totalVal = awarded.reduce((s,t)=>s+t.value,0);
+  document.getElementById('tender-stats').innerHTML = [
+    {num:D.tenders.length, label:'Total Logged', color:'var(--blue)'},
+    {num:active.length, label:'Active', color:'var(--gold)'},
+    {num:awarded.length, label:'Awarded', color:'var(--green)'},
+    {num:overdue.length, label:'Overdue', color:'var(--red)'},
+  ].map(s=>`<div class="tstat">
+    <div class="tstat-num" style="color:${s.color}">${s.num}</div>
+    <div class="tstat-label">${s.label}</div>
+  </div>`).join('');
+
+  empty.style.display = D.tenders.length?'none':'block';
+  const statusColors = {
+    'Identified':'p-grey','Documents Gathering':'p-blue','Bid In Progress':'p-gold',
+    'Submitted':'p-purple','Awarded':'p-green','Lost':'p-red','Withdrawn':'p-grey'
+  };
+  tb.innerHTML = D.tenders.map(td=>{
+    const docsReady = REQUIRED_DOCS.filter(r=>D.documents.find(d=>d.type===r.type)).length;
+    const pct = Math.round((docsReady/REQUIRED_DOCS.length)*100);
+    const isOverdue = td.deadline&&td.deadline<todayStr&&!['Awarded','Lost','Withdrawn','Submitted'].includes(td.status);
+    return `<tr>
+      <td class="mono" style="color:var(--gold);font-size:11px">${td.ref}</td>
+      <td style="max-width:160px;font-size:12px;font-weight:600">${td.title}</td>
+      <td style="font-size:11px">${td.org||td.portal}</td>
+      <td class="mono">${td.value?'R'+td.value.toLocaleString():'—'}</td>
+      <td style="font-size:11px;color:${isOverdue?'var(--red)':'inherit'}">${td.deadline||'—'}${isOverdue?' ⚠️':''}</td>
+      <td><select style="background:transparent;border:1px solid var(--border2);font-size:10px;padding:3px 6px;border-radius:20px;color:var(--text2)" onchange="updateTenderStatus(${td.id},this.value)">
+        ${['Identified','Documents Gathering','Bid In Progress','Submitted','Awarded','Lost','Withdrawn'].map(s=>`<option ${td.status===s?'selected':''}>${s}</option>`).join('')}
+      </select></td>
+      <td>
+        <div style="display:flex;align-items:center;gap:6px">
+          <div style="flex:1;height:4px;background:var(--surface3);border-radius:2px;min-width:50px">
+            <div style="height:100%;width:${pct}%;background:${pct===100?'var(--green)':pct>50?'var(--amber)':'var(--red)'};border-radius:2px"></div>
+          </div>
+          <span style="font-size:10px;color:var(--text3)">${pct}%</span>
+        </div>
+      </td>
+      <td style="white-space:nowrap">
+        <button class="btn btn-blue btn-xs" onclick="draftBidFromTender(${td.id})">✨ Draft Bid</button>
+        <button class="btn btn-ghost btn-xs" onclick="deleteTender(${td.id})">✕</button>
+      </td>
+    </tr>`;
+  }).join('');
+
+  // Update nav badge — overdue tenders
+  const nb = document.getElementById('nb-tenders');
+  nb.style.display = overdue.length?'inline':'none';
+  nb.textContent = overdue.length;
+}
+
+function updateTenderStatus(id, status){
+  const t = D.tenders.find(x=>x.id===id); if(t) t.status=status;
+  if(status==='Awarded') addActivity(`🏆 Tender AWARDED: ${t?.title}`,'var(--green)');
+  save(); renderTenders();
+}
+
+function deleteTender(id){
+  D.tenders = D.tenders.filter(t=>t.id!==id);
+  save(); renderTenders(); toast('Tender removed','var(--amber)');
+}
+
+function draftBidFromTender(id){
+  const t = D.tenders.find(x=>x.id===id);
+  if(!t) return;
+  // Switch to bid drafter view and pre-fill
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  document.getElementById('view-biddrafter').classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  document.querySelector('[data-view="biddrafter"]').classList.add('active');
+  document.getElementById('page-title').textContent='AI Bid Drafter';
+  setTimeout(()=>{
+    document.getElementById('bid-ref').value = t.ref||'';
+    document.getElementById('bid-org').value = t.org||'';
+    document.getElementById('bid-title').value = t.title||'';
+    document.getElementById('bid-scope').value = t.scope||'';
+    document.getElementById('bid-value').value = t.value||'';
+    document.getElementById('bid-deadline').value = t.deadline||'';
+  },50);
+  closeSidebar();
+  toast('Tender loaded into Bid Drafter!');
+}
+
+// ══════════════════════════════════════════
+//  AI BID DRAFTER
+// ══════════════════════════════════════════
+function renderBidDocChecks(){
+  const container = document.getElementById('bid-doc-checks');
+  if(!container) return;
+  if(!D.documents.length){
+    container.innerHTML='<div style="color:var(--text3);font-size:12px">Add documents to your vault first — they\'ll appear here to include in the bid.</div>';
+    return;
+  }
+  container.innerHTML = D.documents.map(doc=>`
+    <label style="display:flex;align-items:center;gap:8px;font-size:12px;cursor:pointer;text-transform:none;letter-spacing:0;color:var(--text2);padding:4px 0">
+      <input type="checkbox" id="bdc-${doc.id}" checked style="width:auto;padding:0;border:none;background:none">
+      ${DOC_ICONS[doc.category]||'📄'} ${doc.name} <span style="color:var(--text3);font-size:10px">(${doc.type})</span>
+    </label>`).join('');
+}
+
+async function generateBid(){
+  const ref = v('bid-ref');
+  const org = v('bid-org');
+  const title = v('bid-title');
+  const scope = v('bid-scope');
+  const value = v('bid-value');
+  const deadline = v('bid-deadline');
+
+  if(!title||!scope){ toast('Add a tender title and scope first','var(--red)'); return; }
+
+  // Get checked documents
+  const checkedDocs = D.documents.filter(doc=>{
+    const el = document.getElementById('bdc-'+doc.id);
+    return el && el.checked;
+  });
+
+  const output = document.getElementById('bid-output');
+  const generating = document.getElementById('bid-generating');
+  output.style.display='none';
+  generating.style.display='block';
+  document.getElementById('gen-btn').disabled=true;
+  document.getElementById('gen-btn').textContent='⚙️ Generating...';
+
+  const docList = checkedDocs.length
+    ? checkedDocs.map(d=>`- ${d.name} (${d.type})`).join('\n')
+    : 'No documents specified';
+
+  const prompt = `You are a professional bid writer for Empirex Legacy Group, a South African electrical cable procurement intermediary/middleman company. Write a complete, professional bid proposal document for the following tender.
+
+TENDER DETAILS:
+- Reference Number: ${ref||'TBD'}
+- Issuing Organisation: ${org||'Not specified'}
+- Tender Title: ${title}
+- Estimated Value: ${value?'R'+parseFloat(value).toLocaleString():'Not specified'}
+- Submission Deadline: ${deadline||'Not specified'}
+- Scope of Work: ${scope}
+
+COMPANY INFO:
+- Company Name: Empirex Legacy Group
+- Role: Procurement intermediary / middleman for electrical cables
+- Expertise: Sourcing electrical cables from multiple certified manufacturers including XLPE cables, trailing cables, armoured cables, HV/MV/LV power cables
+- Compliance: Committed to ISO 9001, PPPFA Act 5/2000, NEC3 framework
+- B-BBEE: Compliant (include placeholder)
+- Value proposition: Multi-manufacturer sourcing, single point of contact, quality guarantee, competitive pricing, responsive delivery
+
+DOCUMENTS AVAILABLE FOR SUBMISSION:
+${docList}
+
+Write a professional, formal bid proposal with these sections:
+1. Cover Letter / Executive Summary
+2. Company Profile & Background
+3. Understanding of the Scope
+4. Our Approach & Methodology
+5. Why Choose Empirex Legacy Group
+6. Compliance & Quality Assurance
+7. Documents Submitted
+8. Declaration
+
+Make it persuasive, professional and specific to the tender. Use South African business language. Format clearly with section headers.`;
+
+  try {
+    const response = await fetch('https://api.anthropic.com/v1/messages', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({
+        model:'claude-sonnet-4-20250514',
+        max_tokens:1000,
+        messages:[{role:'user',content:prompt}]
+      })
+    });
+    const data = await response.json();
+    const text = data.content?.map(c=>c.text||'').join('\n')||'Error generating bid. Please try again.';
+    output.style.display='block';
+    generating.style.display='none';
+    output.textContent = text;
+    document.getElementById('gen-btn').disabled=false;
+    document.getElementById('gen-btn').textContent='✨ Generate Bid Proposal';
+    toast('✓ Bid proposal generated!');
+  } catch(e) {
+    output.style.display='block';
+    generating.style.display='none';
+    output.textContent='Error generating bid. Please check your connection and try again.\n\nError: '+e.message;
+    document.getElementById('gen-btn').disabled=false;
+    document.getElementById('gen-btn').textContent='✨ Generate Bid Proposal';
+    toast('Generation failed','var(--red)');
+  }
+}
+
+function copyBid(){
+  const text = document.getElementById('bid-output').textContent;
+  if(!text||text.includes('Fill in the tender details')) { toast('Generate a bid first','var(--red)'); return; }
+  navigator.clipboard.writeText(text).then(()=>toast('✓ Copied to clipboard!'));
+}
+
+function saveBidAsTender(){
+  const title = v('bid-title');
+  const ref = v('bid-ref');
+  if(!title){ toast('Add a tender title first','var(--red)'); return; }
+  const existing = D.tenders.find(t=>t.ref===ref&&ref);
+  if(existing){
+    existing.status='Bid In Progress';
+    toast('✓ Tender status updated to Bid In Progress!');
+  } else {
+    D.tenders.push({
+      id:D.counters.tender++, ref:ref||'DRAFT-'+D.counters.tender,
+      portal:'Other', title, org:v('bid-org'),
+      value:parseFloat(v('bid-value'))||0,
+      deadline:v('bid-deadline'), brief:'',
+      status:'Bid In Progress', scope:v('bid-scope'), notes:'',
+      created:today()
+    });
+    toast('✓ Saved as new tender!');
+  }
+  save(); renderTenders();
+}
+
+function clearBidDraft(){
+  clearFields(['bid-ref','bid-org','bid-title','bid-scope','bid-value','bid-deadline']);
+  document.getElementById('bid-output').textContent='Fill in the tender details and click Generate Bid Proposal to create a professional bid document instantly.';
+  toast('Draft cleared');
+}
+
+// ══════════════════════════════════════════
+//  AUTH SYSTEM
+// ══════════════════════════════════════════
+let currentUser = null;
+let registerRole = 'admin';
+
+// Built-in admin account (always exists)
+const SEED_ADMIN = {
+  id:'admin-seed', name:'Empirex Admin', email:'admin@empirex.co.za',
+  password:'admin123', role:'admin', company:'Empirex Legacy Group',
+  color:'#E8A020', created:'2025-01-01'
+};
+
+function getUsers(){
+  try{ return JSON.parse(localStorage.getItem('elg-users')||'[]'); }catch(e){ return []; }
+}
+function saveUsers(users){ localStorage.setItem('elg-users', JSON.stringify(users)); }
+function getAllUsers(){
+  const users = getUsers();
+  if(!users.find(u=>u.id==='admin-seed')) users.unshift(SEED_ADMIN);
+  return users;
+}
+
+function switchLoginTab(tab, el){
+  document.querySelectorAll('.login-tab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('tab-login').style.display = tab==='login'?'flex':'none';
+  document.getElementById('tab-register').style.display = tab==='register'?'flex':'none';
+  document.getElementById('tab-login').style.flexDirection = 'column';
+  document.getElementById('tab-register').style.flexDirection = 'column';
+  document.getElementById('login-err').classList.remove('show');
+}
+
+function selectRole(role){
+  registerRole = role;
+  document.getElementById('role-admin').classList.toggle('selected', role==='admin');
+  document.getElementById('role-client').classList.toggle('selected', role==='client');
+  document.getElementById('rg-company-wrap').style.display = role==='client'?'flex':'none';
+}
+
+function showLoginErr(msg){
+  const el = document.getElementById('login-err');
+  el.textContent = msg; el.classList.add('show');
+}
+
+function doLogin(){
+  const email = document.getElementById('li-email').value.trim().toLowerCase();
+  const pass = document.getElementById('li-pass').value;
+  if(!email||!pass){ showLoginErr('Please enter email and password.'); return; }
+  const users = getAllUsers();
+  const user = users.find(u=>u.email.toLowerCase()===email && u.password===pass);
+  if(!user){ showLoginErr('Incorrect email or password.'); return; }
+  loginSuccess(user);
+}
+
+function doRegister(){
+  const name = document.getElementById('rg-name').value.trim();
+  const email = document.getElementById('rg-email').value.trim().toLowerCase();
+  const pass = document.getElementById('rg-pass').value;
+  const pass2 = document.getElementById('rg-pass2').value;
+  const company = document.getElementById('rg-company').value.trim();
+  if(!name||!email||!pass){ showLoginErr('Please fill in all required fields.'); return; }
+  if(pass.length<6){ showLoginErr('Password must be at least 6 characters.'); return; }
+  if(pass!==pass2){ showLoginErr('Passwords do not match.'); return; }
+  const users = getUsers();
+  if(getAllUsers().find(u=>u.email.toLowerCase()===email)){ showLoginErr('An account with this email already exists.'); return; }
+  const newUser = {
+    id:'u'+Date.now(), name, email, password:pass,
+    role:registerRole, company:company||name,
+    color:COLORS[users.length%COLORS.length],
+    created:new Date().toISOString().split('T')[0]
+  };
+  users.push(newUser);
+  saveUsers(users);
+  loginSuccess(newUser);
+}
+
+function loginSuccess(user){
+  currentUser = user;
+  localStorage.setItem('elg-session', JSON.stringify({id:user.id, ts:Date.now()}));
+  document.getElementById('login-screen').classList.add('hidden');
+  initForUser();
+}
+
+function doLogout(){
+  currentUser = null;
+  localStorage.removeItem('elg-session');
+  closeModal('m-usermenu');
+  document.getElementById('login-screen').classList.remove('hidden');
+  document.getElementById('li-email').value='';
+  document.getElementById('li-pass').value='';
+  document.getElementById('login-err').classList.remove('show');
+  document.getElementById('user-badge').style.display='none';
+}
+
+function restoreSession(){
+  try{
+    const sess = JSON.parse(localStorage.getItem('elg-session')||'null');
+    if(!sess) return false;
+    // Session valid for 30 days
+    if(Date.now()-sess.ts > 30*24*60*60*1000){ localStorage.removeItem('elg-session'); return false; }
+    const user = getAllUsers().find(u=>u.id===sess.id);
+    if(!user) return false;
+    currentUser = user;
+    return true;
+  }catch(e){ return false; }
+}
+
+function initForUser(){
+  if(!currentUser) return;
+  // Set user badge
+  const badge = document.getElementById('user-badge');
+  badge.style.display='flex';
+  const initials = currentUser.name.split(' ').map(w=>w[0]).join('').substring(0,2).toUpperCase();
+  document.getElementById('user-av').textContent = initials;
+  document.getElementById('user-av').style.background = (currentUser.color||'#E8A020')+'33';
+  document.getElementById('user-av').style.color = currentUser.color||'#E8A020';
+  document.getElementById('user-name-badge').textContent = currentUser.name.split(' ')[0];
+
+  if(currentUser.role==='client'){
+    setupClientPortal();
+  } else {
+    setupAdminView();
+  }
+}
+
+function setupAdminView(){
+  document.querySelector('.main').style.display='flex';
+  // Show all nav items
+  document.querySelectorAll('.nav-item').forEach(n=>n.style.display='flex');
+  // Navigate to dashboard
+  const dashNav = document.querySelector('[data-view="dashboard"]');
+  if(dashNav){ nav(dashNav); }
+  load();
+}
+
+function setupClientPortal(){
+  // Clients only see their portal
+  document.querySelectorAll('.nav-item').forEach(n=>n.style.display='none');
+  // Show only portal nav
+  const portalNav = document.querySelector('[data-view="portal"]');
+  if(portalNav){ portalNav.style.display='flex'; nav(portalNav); }
+  else{
+    // Manually show portal
+    document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+    document.getElementById('view-portal').classList.add('active');
+    document.getElementById('page-title').textContent='My Portal';
+    document.getElementById('topbar-cta').style.display='none';
+  }
+  loadClientPortal();
+}
+
+function loadClientPortal(){
+  // Load admin's data to show client's orders/quotes/invoices
+  // Client sees data linked to their company name
+  try{
+    const r = localStorage.getItem('elg-crm-v2-admin-seed');
+    if(r) D = JSON.parse(r);
+    else{
+      // Try loading from any admin's data
+      const keys = Object.keys(localStorage).filter(k=>k.startsWith('elg-crm-v2'));
+      if(keys.length) D = JSON.parse(localStorage.getItem(keys[0])||'{}');
+    }
+  }catch(e){}
+  renderClientPortal();
+}
+
+function renderClientPortal(){
+  const cname = currentUser.company||currentUser.name;
+  document.getElementById('portal-welcome-name').textContent = currentUser.name;
+
+  // Find matching client record
+  const clientRec = (D.clients||[]).find(c=>
+    c.company.toLowerCase().includes(cname.toLowerCase()) ||
+    cname.toLowerCase().includes(c.company.toLowerCase())
+  );
+  const cid = clientRec?.id;
+
+  const myOrders = cid ? (D.orders||[]).filter(o=>o.clientId===cid) : [];
+  const myQuotes = cid ? (D.quotes||[]).filter(q=>q.clientId===cid) : [];
+  const myInvs   = cid ? (D.invoices||[]).filter(i=>i.clientId===cid) : [];
+
+  // KPIs
+  const outstanding = myInvs.filter(i=>i.status!=='Paid').reduce((s,i)=>s+i.total,0);
+  document.getElementById('portal-kpis').innerHTML = [
+    {label:'Orders',num:myOrders.length,color:'var(--gold)'},
+    {label:'Open Quotes',num:myQuotes.filter(q=>q.status==='Pending').length,color:'var(--blue)'},
+    {label:'Outstanding (ZAR)',num:'R'+outstanding.toLocaleString(),color:'var(--amber)'},
+  ].map(k=>`<div class="kpi" style="text-align:center;padding:14px">
+    <div style="font-family:'Syne',sans-serif;font-size:22px;font-weight:700;color:${k.color}">${k.num}</div>
+    <div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:1px;margin-top:4px">${k.label}</div>
+  </div>`).join('');
+
+  // Orders
+  document.getElementById('portal-orders').innerHTML = myOrders.length
+    ? myOrders.map(o=>`<tr>
+        <td class="mono" style="color:var(--gold)">ORD-${pad(o.id)}</td>
+        <td style="font-size:12px">${o.desc}</td>
+        <td>${statusPill(o.status)}</td>
+        <td style="font-size:11px">${o.eta||'—'}</td>
+      </tr>`).join('')
+    : '<tr><td colspan="4" style="text-align:center;color:var(--text3);padding:20px">No orders yet</td></tr>';
+
+  // Quotes
+  document.getElementById('portal-quotes').innerHTML = myQuotes.length
+    ? myQuotes.map(q=>`<tr>
+        <td class="mono" style="color:var(--gold)">Q-${pad(q.id)}</td>
+        <td style="font-size:12px">${q.title||'—'}</td>
+        <td class="mono">R${q.total.toFixed(2)}</td>
+        <td><span class="pill ${q.status==='Accepted'?'p-green':q.status==='Rejected'?'p-red':'p-gold'}">${q.status}</span></td>
+        <td style="font-size:11px">${q.created}</td>
+      </tr>`).join('')
+    : '<tr><td colspan="5" style="text-align:center;color:var(--text3);padding:20px">No quotes yet</td></tr>';
+
+  // Invoices
+  document.getElementById('portal-invoices').innerHTML = myInvs.length
+    ? myInvs.map(i=>`<tr>
+        <td class="mono" style="color:var(--gold)">INV-${pad(i.id)}</td>
+        <td style="font-size:12px">${i.desc||'—'}</td>
+        <td class="mono"><strong>R${i.total.toFixed(2)}</strong></td>
+        <td style="font-size:11px">${i.due||'—'}</td>
+        <td><span class="pill ${i.status==='Paid'?'p-green':'p-gold'}">${i.status}</span></td>
+      </tr>`).join('')
+    : '<tr><td colspan="5" style="text-align:center;color:var(--text3);padding:20px">No invoices yet</td></tr>';
+}
+
+function showUserMenu(){
+  const initials = currentUser.name.split(' ').map(w=>w[0]).join('').substring(0,2).toUpperCase();
+  document.getElementById('um-title').textContent = currentUser.name;
+  document.getElementById('um-info').innerHTML = `
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px">
+      <div style="width:46px;height:46px;border-radius:50%;background:${currentUser.color||'#E8A020'}33;color:${currentUser.color||'#E8A020'};display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-weight:800;font-size:16px">${initials}</div>
+      <div>
+        <div style="font-weight:700">${currentUser.name}</div>
+        <div style="font-size:11px;color:var(--text3)">${currentUser.email}</div>
+      </div>
+    </div>
+    <div class="info-row"><span class="info-label">Role</span><span class="info-val"><span class="pill ${currentUser.role==='admin'?'p-gold':'p-blue'}">${currentUser.role==='admin'?'Admin/Staff':'Client'}</span></span></div>
+    <div class="info-row"><span class="info-label">Company</span><span class="info-val">${currentUser.company||'—'}</span></div>
+    <div class="info-row"><span class="info-label">Member Since</span><span class="info-val">${currentUser.created||'—'}</span></div>`;
+  openModal('m-usermenu');
+}
+
+function changePassword(){
+  const np = prompt('Enter new password (min 6 chars):');
+  if(!np||np.length<6){ toast('Password too short','var(--red)'); return; }
+  if(currentUser.id==='admin-seed'){ toast('Cannot change seed admin password here','var(--amber)'); return; }
+  const users = getUsers();
+  const u = users.find(x=>x.id===currentUser.id);
+  if(u){ u.password=np; saveUsers(users); currentUser=u; toast('✓ Password changed!'); }
+}
+
+// ══════════════════════════════════════════
+//  PWA — SERVICE WORKER & MANIFEST
+// ══════════════════════════════════════════
+function setupPWA(){
+  // Inject manifest dynamically
+  const manifest = {
+    name:'Empirex Legacy Group CRM',
+    short_name:'Empirex CRM',
+    description:'Business CRM & Operations Hub for Empirex Legacy Group',
+    start_url:window.location.href,
+    display:'standalone',
+    background_color:'#0A0E17',
+    theme_color:'#0A0E17',
+    orientation:'portrait-primary',
+    icons:[
+      {src:'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192"><rect width="192" height="192" rx="32" fill="%230A0E17"/><text y="130" x="20" font-size="120" font-family="Arial" font-weight="900" fill="%23E8A020">E</text></svg>',sizes:'192x192',type:'image/svg+xml'},
+      {src:'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><rect width="512" height="512" rx="80" fill="%230A0E17"/><text y="380" x="40" font-size="340" font-family="Arial" font-weight="900" fill="%23E8A020">E</text></svg>',sizes:'512x512',type:'image/svg+xml'}
+    ]
+  };
+  const blob = new Blob([JSON.stringify(manifest)],{type:'application/json'});
+  document.getElementById('pwa-manifest').href = URL.createObjectURL(blob);
+
+  // Register service worker for offline
+  if('serviceWorker' in navigator){
+    const swCode = `
+const CACHE='elg-crm-v2';
+const URLS=[self.location.href];
+self.addEventListener('install',e=>{ e.waitUntil(caches.open(CACHE).then(c=>c.addAll(URLS))); self.skipWaiting(); });
+self.addEventListener('activate',e=>{ e.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k!==CACHE).map(k=>caches.delete(k))))); self.clients.claim(); });
+self.addEventListener('fetch',e=>{ e.respondWith(caches.match(e.request).then(r=>r||fetch(e.request).then(res=>{ if(res.ok){ const c=res.clone(); caches.open(CACHE).then(ca=>ca.put(e.request,c)); } return res; }).catch(()=>caches.match(e.request)))); });`;
+    const swBlob = new Blob([swCode],{type:'application/javascript'});
+    const swUrl = URL.createObjectURL(swBlob);
+    navigator.serviceWorker.register(swUrl).catch(()=>{});
+  }
+
+  // Install prompt
+  let deferredPrompt;
+  window.addEventListener('beforeinstallprompt',e=>{
+    e.preventDefault(); deferredPrompt=e;
+    document.getElementById('install-banner').classList.add('show');
+  });
+  document.getElementById('install-btn').addEventListener('click',()=>{
+    if(deferredPrompt){ deferredPrompt.prompt(); deferredPrompt.userChoice.then(()=>{ deferredPrompt=null; document.getElementById('install-banner').classList.remove('show'); }); }
+  });
+  window.addEventListener('appinstalled',()=>{ document.getElementById('install-banner').classList.remove('show'); toast('✓ App installed!'); });
+}
+
+// ══════════════════════════════════════════
+//  STORAGE — per-user data isolation
+// ══════════════════════════════════════════
+async function save(){
+  const key = 'elg-crm-v2-'+(currentUser?.id||'guest');
+  try{
+    localStorage.setItem(key, JSON.stringify(D));
+    if(window.storage) await window.storage.set(key, JSON.stringify(D));
+  }catch(e){}
+}
+
+async function load(){
+  const key = 'elg-crm-v2-'+(currentUser?.id||'guest');
+  try{
+    // Try localStorage first (works offline)
+    const local = localStorage.getItem(key);
+    if(local){ D = JSON.parse(local); }
+    else if(window.storage){
+      const r = await window.storage.get(key);
+      if(r) D = JSON.parse(r.value);
+    }
+  }catch(e){}
+  initCatalog();
+  renderAll();
+  updateBadges();
+}
+
+// ══════════════════════════════════════════
+//  INIT
+// ══════════════════════════════════════════
+window.addEventListener('load', ()=>{
+  setupPWA();
+  if(restoreSession()){
+    document.getElementById('login-screen').classList.add('hidden');
+    initForUser();
+  }
+  // Enter key on login
+  documen

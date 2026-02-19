@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Empirex CRM — Go Live Guide</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Manrope:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0A0E17;--surface:#111827;--surface2:#1A2236;--border:rgba(255,255,255,0.07);--gold:#E8A020;--gold2:#F5C45A;--gold-dim:rgba(232,160,32,0.1);--blue:#3B82F6;--green:#10B981;--red:#EF4444;--text:#F1F5F9;--text2:#94A3B8;--text3:#64748B;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Manrope',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding:0 0 60px;}
+.hero{background:linear-gradient(135deg,#0A0E17 0%,#1a2040 100%);border-bottom:1px solid var(--border);padding:40px 24px 32px;text-align:center;}
+.hero-logo{font-family:'Syne',sans-serif;font-size:32px;font-weight:800;color:var(--gold);letter-spacing:2px;}
+.hero-sub{font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--text3);margin-top:4px;}
+.hero-title{font-family:'Syne',sans-serif;font-size:24px;font-weight:700;margin-top:20px;color:var(--text);}
+.hero-desc{font-size:14px;color:var(--text2);margin-top:8px;max-width:480px;margin-left:auto;margin-right:auto;line-height:1.6;}
+.container{max-width:680px;margin:0 auto;padding:28px 16px;}
+.section{margin-bottom:28px;}
+.section-label{font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);margin-bottom:14px;font-weight:700;}
+.step-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:20px;margin-bottom:12px;position:relative;}
+.step-num{position:absolute;top:-12px;left:16px;background:var(--gold);color:#0A0E17;font-family:'Syne',sans-serif;font-size:12px;font-weight:800;padding:3px 10px;border-radius:20px;}
+.step-title{font-family:'Syne',sans-serif;font-size:16px;font-weight:700;margin-bottom:8px;margin-top:4px;}
+.step-body{font-size:13px;color:var(--text2);line-height:1.7;}
+.step-body strong{color:var(--text);}
+.step-body a{color:var(--blue);text-decoration:none;}
+.step-body a:hover{text-decoration:underline;}
+.code{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:10px 14px;font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--gold2);margin:10px 0;word-break:break-all;}
+.tip{background:rgba(59,130,246,0.08);border:1px solid rgba(59,130,246,0.2);border-radius:8px;padding:12px 14px;font-size:12px;color:var(--text2);margin-top:10px;display:flex;gap:8px;}
+.warn{background:rgba(232,160,32,0.08);border:1px solid rgba(232,160,32,0.2);border-radius:8px;padding:12px 14px;font-size:12px;color:var(--text2);margin-top:10px;display:flex;gap:8px;}
+.done-banner{background:linear-gradient(135deg,rgba(16,185,129,0.12),rgba(16,185,129,0.04));border:1px solid rgba(16,185,129,0.25);border-radius:14px;padding:20px;text-align:center;margin-bottom:28px;}
+.done-icon{font-size:36px;margin-bottom:8px;}
+.done-title{font-family:'Syne',sans-serif;font-size:18px;font-weight:700;color:var(--green);}
+.done-sub{font-size:13px;color:var(--text2);margin-top:6px;line-height:1.6;}
+.files-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:18px;margin-bottom:12px;}
+.file-row{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border);}
+.file-row:last-child{border-bottom:none;}
+.file-icon{font-size:20px;width:28px;text-align:center;}
+.file-name{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--gold2);}
+.file-desc{font-size:11px;color:var(--text3);margin-top:2px;}
+.pill{display:inline-flex;align-items:center;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:600;}
+.p-green{background:rgba(16,185,129,0.12);color:var(--green);}
+.p-blue{background:rgba(59,130,246,0.12);color:var(--blue);}
+.divider{height:1px;background:var(--border);margin:20px 0;}
+@media(max-width:480px){
+  .hero{padding:28px 16px 24px;}
+  .hero-logo{font-size:26px;}
+  .hero-title{font-size:20px;}
+  .container{padding:20px 12px;}
+}
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="hero-logo">EMPIREX</div>
+  <div class="hero-sub">Legacy Group</div>
+  <div class="hero-title">🚀 Go Live Guide</div>
+  <div class="hero-desc">Follow these steps to deploy your CRM to the internet — free, in under 10 minutes, no coding required.</div>
+</div>
+
+<div class="container">
+
+  <!-- FILES IN THIS PACKAGE -->
+  <div class="section">
+    <div class="section-label">📦 What's in this package</div>
+    <div class="files-card">
+      <div class="file-row">
+        <div class="file-icon">🌐</div>
+        <div>
+          <div class="file-name">index.html</div>
+          <div class="file-desc">Your entire Empirex CRM app — this is the main file</div>
+        </div>
+        <span class="pill p-green" style="margin-left:auto">Required</span>
+      </div>
+      <div class="file-row">
+        <div class="file-icon">⚙️</div>
+        <div>
+          <div class="file-name">netlify.toml</div>
+          <div class="file-desc">Netlify configuration — handles routing and security</div>
+        </div>
+        <span class="pill p-green" style="margin-left:auto">Required</span>
+      </div>
+      <div class="file-row">
+        <div class="file-icon">📖</div>
+        <div>
+          <div class="file-name">DEPLOY-GUIDE.html</div>
+          <div class="file-desc">This guide — you can delete it after deploying</div>
+        </div>
+        <span class="pill p-blue" style="margin-left:auto">Optional</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEPS -->
+  <div class="section">
+    <div class="section-label">🪜 Deployment Steps</div>
+
+    <div class="step-card">
+      <div class="step-num">Step 1</div>
+      <div class="step-title">Push files to GitHub</div>
+      <div class="step-body">
+        <strong>Go to <a href="https://github.com" target="_blank">github.com</a></strong> and sign in to your account.<br><br>
+        Click the <strong>green "New" button</strong> to create a new repository.<br><br>
+        Name it: <div class="code">empirex-crm</div>
+        Set it to <strong>Public</strong>, then click <strong>"Create repository"</strong>.<br><br>
+        On the next screen, click <strong>"uploading an existing file"</strong>, then drag and drop ALL 3 files from this folder (<strong>index.html</strong>, <strong>netlify.toml</strong>, <strong>DEPLOY-GUIDE.html</strong>) into the upload area.<br><br>
+        Scroll down and click <strong>"Commit changes"</strong>.
+      </div>
+      <div class="tip">💡 You only need to do this once. Future updates are just drag-and-drop.</div>
+    </div>
+
+    <div class="step-card">
+      <div class="step-num">Step 2</div>
+      <div class="step-title">Create a free Netlify account</div>
+      <div class="step-body">
+        Go to <a href="https://netlify.com" target="_blank"><strong>netlify.com</strong></a> and click <strong>"Sign up"</strong>.<br><br>
+        Choose <strong>"Sign up with GitHub"</strong> — this connects your GitHub so Netlify can read your files.<br><br>
+        Authorise Netlify to access your GitHub account when prompted.
+      </div>
+    </div>
+
+    <div class="step-card">
+      <div class="step-num">Step 3</div>
+      <div class="step-title">Deploy your site</div>
+      <div class="step-body">
+        Once logged into Netlify, click <strong>"Add new site"</strong> → <strong>"Import an existing project"</strong>.<br><br>
+        Choose <strong>GitHub</strong>, find your <strong>empirex-crm</strong> repository and select it.<br><br>
+        Leave all settings as default and click <strong>"Deploy site"</strong>.<br><br>
+        Wait about 30 seconds. Netlify will give you a URL like:
+        <div class="code">https://random-name-123.netlify.app</div>
+      </div>
+    </div>
+
+    <div class="step-card">
+      <div class="step-num">Step 4</div>
+      <div class="step-title">Set your custom subdomain</div>
+      <div class="step-body">
+        In your Netlify dashboard, go to <strong>Site configuration</strong> → <strong>Site details</strong> → <strong>"Change site name"</strong>.<br><br>
+        Type your preferred name:
+        <div class="code">empirex-crm</div>
+        Your app will then be live at:
+        <div class="code">https://empirex-crm.netlify.app</div>
+        <strong>Share this link with your clients</strong> — they can open it on any phone or computer.
+      </div>
+      <div class="warn">⚠️ If <strong>empirex-crm</strong> is taken, try <strong>empirexlegacy-crm</strong> or <strong>empirex-hub</strong></div>
+    </div>
+
+    <div class="step-card">
+      <div class="step-num">Step 5</div>
+      <div class="step-title">Install on your phone</div>
+      <div class="step-body">
+        Open your live URL in <strong>Chrome on your Android phone</strong>.<br><br>
+        Tap the <strong>3-dot menu (⋮)</strong> in the top right corner.<br><br>
+        Tap <strong>"Add to Home Screen"</strong> or <strong>"Install App"</strong>.<br><br>
+        The app icon will appear on your home screen — it opens like a real app, works offline, and has no browser bar.
+      </div>
+      <div class="tip">💡 Share the URL with clients and tell them to do the same — they'll install it as their portal app.</div>
+    </div>
+
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- DONE -->
+  <div class="done-banner">
+    <div class="done-icon">🎉</div>
+    <div class="done-title">You're live!</div>
+    <div class="done-sub">
+      Your Empirex CRM is now a real web app.<br>
+      Accessible from any phone, anywhere, anytime.<br><br>
+      <strong style="color:var(--green)">Admin login:</strong><br>
+      Email: <strong>admin@empirex.co.za</strong><br>
+      Password: <strong>admin123</strong><br><br>
+      <span style="color:var(--text3);font-size:11px">Change your password after first login.</span>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- UPDATE INSTRUCTIONS -->
+  <div class="section">
+    <div class="section-label">🔄 How to update the app in future</div>
+    <div class="step-card" style="padding-top:16px">
+      <div class="step-body">
+        When you want to update the app (new features, fixes):<br><br>
+        1. Go to your <strong>empirex-crm</strong> repository on GitHub<br>
+        2. Click on <strong>index.html</strong><br>
+        3. Click the <strong>pencil icon (Edit)</strong> or drag and drop the new file<br>
+        4. Click <strong>"Commit changes"</strong><br><br>
+        Netlify automatically detects the change and redeploys in about 30 seconds. <strong>No manual work needed.</strong>
+      </div>
+    </div>
+  </div>
+
+  <!-- UPGRADE PATH -->
+  <div class="section">
+    <div class="section-label">⬆️ When you're ready to upgrade</div>
+    <div class="step-card" style="padding-top:16px">
+      <div class="step-body">
+        <strong>Get a .co.za domain</strong> (~R150/yr)<br>
+        Buy from <a href="https://www.domains.co.za" target="_blank">domains.co.za</a> and connect to Netlify in settings → "Domain management". Your site becomes <strong>empirexlegacy.co.za</strong>.<br><br>
+        <strong>Add a real database</strong> (when you have many users)<br>
+        Sign up for <a href="https://supabase.com" target="_blank">supabase.com</a> (free tier) — this moves data from phone storage to a shared cloud database so all users see the same data in real time.
+      </div>
+    </div>
+  </div>
+
+  <div style="text-align:center;font-size:11px;color:var(--text3);padding-top:20px">
+    Empirex Legacy Group · CRM System · Built with ❤️
+  </div>
+
+</div>
+</body>
+</html>
