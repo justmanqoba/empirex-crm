@@ -1,3 +1,49 @@
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+  const loginBtn = document.getElementById("loginBtn");
+  const registerBtn = document.getElementById("registerBtn");
+
+  const emailInput = document.querySelector("input[type='email'], input[type='text']");
+  const passwordInput = document.querySelector("input[type='password']");
+
+  // LOGIN BUTTON
+  loginBtn.addEventListener("click", function () {
+    const email = emailInput.value.trim();
+    const password = passwordInput.value.trim();
+
+    if (!email || !password) {
+      alert("Please enter email and password");
+      return;
+    }
+
+    alert("Login successful!");
+    console.log("Login:", email, password);
+
+    // Redirect after login
+    // window.location.href = "dashboard.html";
+  });
+
+  // REGISTER BUTTON
+  registerBtn.addEventListener("click", function () {
+    const email = emailInput.value.trim();
+    const password = passwordInput.value.trim();
+
+    if (!email || !password) {
+      alert("Please enter email and password to register");
+      return;
+    }
+
+    alert("Registration successful!");
+    console.log("Register:", email, password);
+
+    // Redirect after register
+    // window.location.href = "dashboard.html";
+  });
+
+});
+</script>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
